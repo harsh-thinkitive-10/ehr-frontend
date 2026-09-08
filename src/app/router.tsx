@@ -8,6 +8,7 @@ import DashboardPage from '../features/dashboard/pages/DashboardPage';
 import NotFoundPage from '../pages/NotFoundPage';
 
 import ProtectedRoute from '../routes/ProtectedRoute';
+import PatientProfilePage from '../features/patient/pages/PatientProfilePage';
 
 export const router = createBrowserRouter([
   {
@@ -30,6 +31,14 @@ export const router = createBrowserRouter([
     element: (
       <ProtectedRoute>
         <DashboardPage />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/patient/profile',
+    element: (
+      <ProtectedRoute>
+        <PatientProfilePage />
       </ProtectedRoute>
     ),
   },

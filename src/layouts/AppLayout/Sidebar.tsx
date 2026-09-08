@@ -12,14 +12,12 @@ import DescriptionIcon from '@mui/icons-material/Description';
 import MedicationIcon from '@mui/icons-material/Medication';
 import BarChartIcon from '@mui/icons-material/BarChart';
 import SettingsIcon from '@mui/icons-material/Settings';
-import LogoutIcon from '@mui/icons-material/Logout';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 
 import type { ReactNode } from 'react';
 
-import { NavLink, useNavigate } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 
-import { useAuth } from '../../features/auth/context';
 
 interface MenuItem {
   label: string;
@@ -61,17 +59,7 @@ const menuItems: MenuItem[] = [
 ];
 
 export default function Sidebar() {
-  const navigate = useNavigate();
-  const { logout } = useAuth();
-
-  const handleLogout = () => {
-    logout();
-
-    navigate('/login', {
-      replace: true,
-    });
-  };
-
+ 
   return (
     <Box
       component="aside"
@@ -224,42 +212,6 @@ export default function Sidebar() {
             }}
           >
             Settings
-          </Typography>
-        </Box>
-
-        {/* Logout */}
-
-        <Box
-          onClick={handleLogout}
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 1.5,
-            px: 2,
-            py: 1.4,
-            borderRadius: '8px',
-            cursor: 'pointer',
-            color: '#dc2626',
-
-            '& svg': {
-              fontSize: 20,
-            },
-
-            '&:hover': {
-              backgroundColor: '#fef2f2',
-            },
-          }}
-        >
-          <LogoutIcon fontSize="small" />
-
-          <Typography
-            variant="h6"
-            sx={{
-              fontWeight: 700,
-              color: '#172b4d',
-            }}
-          >
-            Logout
           </Typography>
         </Box>
       </Stack>

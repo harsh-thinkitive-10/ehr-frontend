@@ -15,7 +15,45 @@ import {
 
 import AppLayout from '../../../layouts/AppLayout/AppLayout';
 
+import { usePatientDashboard } from '../../patient/hooks/usePatientDashboard';
+
 export default function DashboardPage() {
+  const {
+    dashboard,
+    loading,
+    error,
+  } = usePatientDashboard();
+
+  if (loading) {
+    return (
+      <AppLayout>
+        <Typography>
+          Loading dashboard...
+        </Typography>
+      </AppLayout>
+    );
+  }
+
+  if (error) {
+    return (
+      <AppLayout>
+        <Typography color="error">
+          {error}
+        </Typography>
+      </AppLayout>
+    );
+  }
+
+  if (!dashboard) {
+    return (
+      <AppLayout>
+        <Typography>
+          Dashboard data not found.
+        </Typography>
+      </AppLayout>
+    );
+  }
+
   return (
     <AppLayout>
       {/* Page Header */}
@@ -33,7 +71,7 @@ export default function DashboardPage() {
             color: '#172b4d',
           }}
         >
-          Good morning, Patient 👋
+          Good morning, {dashboard.patient.fullName} 👋
         </Typography>
 
         <Typography
@@ -61,8 +99,8 @@ export default function DashboardPage() {
         >
           <StatCard
             title="Total Visits"
-            value={12}
-            subtitle="All time"
+            value={dashboard.appointments.completed}
+            subtitle="Completed appointments"
             icon={<MedicalServicesIcon />}
           />
         </Grid>
@@ -76,7 +114,7 @@ export default function DashboardPage() {
         >
           <StatCard
             title="Appointments"
-            value={2}
+            value={dashboard.appointments.upcoming}
             subtitle="Upcoming"
             icon={<CalendarMonthIcon />}
           />
@@ -91,7 +129,7 @@ export default function DashboardPage() {
         >
           <StatCard
             title="Medications"
-            value={4}
+            value={dashboard.prescriptions.active}
             subtitle="Active prescriptions"
             icon={<MedicationIcon />}
           />
@@ -106,7 +144,7 @@ export default function DashboardPage() {
         >
           <StatCard
             title="Medical Records"
-            value={8}
+            value={dashboard.medicalRecords.total ?? '—'}
             subtitle="Available records"
             icon={<DescriptionIcon />}
           />

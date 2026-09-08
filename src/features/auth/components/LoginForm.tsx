@@ -43,8 +43,6 @@ export default function LoginForm() {
     try {
       const response = await authService.login(data);
 
-      console.log('Login successful:', response);
-
       // Store access token and update authentication state
       login(response.access_token);
 
