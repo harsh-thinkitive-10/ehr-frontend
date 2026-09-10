@@ -11,6 +11,11 @@ export interface LoginResponse {
   expires_in: number;
 }
 
+export interface ChangePasswordRequest {
+  currentPassword: string;
+  newPassword: string;
+}
+
 export const authService = {
   async login(data: LoginRequest): Promise<LoginResponse> {
     const response = await apiClient.post<LoginResponse>(
@@ -19,5 +24,14 @@ export const authService = {
     );
 
     return response.data;
+  },
+
+  async changePassword(
+    data: ChangePasswordRequest,
+  ): Promise<void> {
+    await apiClient.patch(
+      '/v1/auth/change-password',
+      data,
+    );
   },
 };

@@ -9,6 +9,7 @@ import NotFoundPage from '../pages/NotFoundPage';
 
 import ProtectedRoute from '../routes/ProtectedRoute';
 import PatientProfilePage from '../features/patient/pages/PatientProfilePage';
+import SettingsPage from '../features/setting/pages/SettingsPage';
 
 export const router = createBrowserRouter([
   {
@@ -43,6 +44,14 @@ export const router = createBrowserRouter([
     ),
   },
 
+  {
+    path: '/settings',
+    element: (
+      <ProtectedRoute>
+        <SettingsPage />
+      </ProtectedRoute>
+    ),
+  },
   {
     path: '*',
     element: <NotFoundPage />,

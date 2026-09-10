@@ -20,10 +20,9 @@ import WcIcon from '@mui/icons-material/Wc';
 import { usePatientProfile } from '../hooks/usePatientProfile';
 
 export default function PatientProfilePage() {
-
   const {
-    patient,
-    loading,
+    data: patient,
+    isLoading: loading,
     error,
   } = usePatientProfile();
 
@@ -44,7 +43,9 @@ export default function PatientProfilePage() {
   if (error) {
     return (
       <Alert severity="error">
-        {error}
+        {error instanceof Error
+          ? error.message
+          : 'Unable to load your profile.'}
       </Alert>
     );
   }

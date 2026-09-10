@@ -11,17 +11,17 @@ export const patientProfileSchema = z.object({
     .trim()
     .min(1, 'Age is required.')
     .refine(
-      (value) => {
-        const age = Number(value);
+        (value) => {
+            const age = Number(value);
 
-        return (
-          Number.isInteger(age) &&
-          age > 0
-        );
-      },
-      {
-        message: 'Please enter a valid age.',
-      },
+            return (
+                Number.isInteger(age) &&
+                age > 0
+            );
+        },
+        {
+            message: 'Age must be a whole number.',
+        },
     ),
 
   gender: z

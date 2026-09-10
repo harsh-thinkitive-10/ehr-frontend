@@ -1,7 +1,9 @@
 import {
   Box,
   Divider,
+  IconButton,
   Stack,
+  Tooltip,
   Typography,
 } from '@mui/material';
 
@@ -58,13 +60,21 @@ const menuItems: MenuItem[] = [
   },
 ];
 
-export default function Sidebar() {
- 
+interface SidebarProps {
+  collapsed: boolean;
+  onToggle: () => void;
+}
+
+export default function Sidebar({
+  collapsed,
+  onToggle,
+}: SidebarProps) {
+
   return (
     <Box
       component="aside"
       sx={{
-        width: 250,
+        width: collapsed ? 72 : 250,
         height: '100vh',
         borderRight: '1px solid #e5e7eb',
         backgroundColor: '#ffffff',
@@ -74,6 +84,8 @@ export default function Sidebar() {
         left: 0,
         top: 0,
         zIndex: 1200,
+        transition: 'width 0.2s ease',
+        overflow: 'hidden',
       }}
     >
       {/* Logo */}
@@ -82,9 +94,10 @@ export default function Sidebar() {
         direction="row"
         spacing={1.5}
         sx={{
-          px: 3,
-          py: 3,
+          px: collapsed ? 1.5 : 3,
+          py: 2,
           alignItems: 'center',
+
         }}
       >
         <Box
@@ -120,7 +133,7 @@ export default function Sidebar() {
         spacing={0.5}
         sx={{
           px: 2,
-          py: 3,
+          py: 2,
           flex: 1,
         }}
       >
@@ -180,40 +193,58 @@ export default function Sidebar() {
 
         {/* Bottom actions */}
 
-        <Box
-          sx={{
-            mt: 'auto',
-            display: 'flex',
-            alignItems: 'center',
-            gap: 1.5,
-            px: 2,
-            py: 1.4,
-            borderRadius: '8px',
-            cursor: 'pointer',
-            color: '#64748b',
-
-            '& svg': {
-              fontSize: 20,
-            },
-
-            '&:hover': {
-              backgroundColor: '#f1f5f9',
-              color: '#1976d2',
-            },
+        <NavLink
+          to="/settings"
+          style={{
+            textDecoration: 'none',
+            color: 'inherit',
           }}
         >
-          <SettingsIcon fontSize="small" />
+          {({ isActive }) => (
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 1.5,
+                px: 2,
+                py: 1.4,
+                minHeight: 48,
+                borderRadius: '8px',
+                color: isActive
+                  ? '#1976d2'
+                  : '#64748b',
+                backgroundColor: isActive
+                  ? '#eaf3ff'
+                  : 'transparent',
 
-          <Typography
-            variant="h6"
-            sx={{
-              fontWeight: 700,
-              color: '#172b4d',
-            }}
-          >
-            Settings
-          </Typography>
-        </Box>
+                '& svg': {
+                  fontSize: 20,
+                },
+
+                '&:hover': {
+                  backgroundColor: isActive
+                    ? '#eaf3ff'
+                    : '#f1f5f9',
+                  color: '#1976d2',
+                },
+              }}
+            >
+              <SettingsIcon fontSize="small" />
+
+              <Typography
+                sx={{
+                  fontSize: '1rem',
+                  fontWeight: 700,
+                  lineHeight: 1.5,
+                  color: '#172b4d',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                Settings
+              </Typography>
+            </Box>
+          )}
+        </NavLink>
       </Stack>
     </Box>
   );

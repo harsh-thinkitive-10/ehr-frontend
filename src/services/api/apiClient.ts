@@ -19,6 +19,17 @@ apiClient.interceptors.request.use((config) => {
   const isAuthRequest =
     config.url?.startsWith('/v1/auth/');
 
+  const isAuthChangePasswordRequest = config.url?.startsWith('/v1/auth/change-password');
+
+  if (isAuthChangePasswordRequest) {
+    const accessToken =
+      tokenService.getAccessToken();
+    if (accessToken) {
+      config.headers.Authorization =
+        `Bearer ${accessToken}`;
+    }
+  }
+
   if (isAuthRequest) {
     return config;
   }

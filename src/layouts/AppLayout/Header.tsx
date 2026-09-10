@@ -23,7 +23,9 @@ import { useNavigate } from 'react-router-dom';
 
 import { useAuth } from '../../features/auth/context';
 
-import ProfileDrawer from '../../features/patient/component/ProfileDrawer';
+import ProfileDrawer from '../../features/patient/component/profile/ProfileDrawer';
+import { usePatientProfile } from '../../features/patient/hooks/usePatientProfile';
+
 
 export default function Header() {
     const navigate = useNavigate();
@@ -43,6 +45,10 @@ export default function Header() {
     ) => {
         setProfileAnchorEl(event.currentTarget);
     };
+    const {
+        data: patient,
+    } = usePatientProfile();
+
 
     const handleProfileClose = () => {
         setProfileAnchorEl(null);
@@ -64,10 +70,6 @@ export default function Header() {
         });
     };
 
-    const handleProfileDrawerClose = () => {
-        setProfileDrawerOpen(false);
-    };
-
     return (
         <>
             <AppBar
@@ -85,7 +87,7 @@ export default function Header() {
                 <Toolbar
                     sx={{
                         minHeight:
-                            '72px !important',
+                            '70px !important',
                         px: 4,
                         justifyContent:
                             'space-between',
@@ -123,11 +125,11 @@ export default function Header() {
                                     '0.875rem',
 
                                 '& input::placeholder':
-                                    {
-                                        color:
-                                            '#94a3b8',
-                                        opacity: 1,
-                                    },
+                                {
+                                    color:
+                                        '#94a3b8',
+                                    opacity: 1,
+                                },
                             }}
                         />
                     </Box>
@@ -210,15 +212,12 @@ export default function Header() {
                             <Box>
                                 <Typography
                                     sx={{
-                                        fontSize:
-                                            '0.875rem',
-                                        fontWeight:
-                                            600,
-                                        lineHeight:
-                                            1.2,
+                                        fontWeight: 600,
+                                        color: '#172b4d',
+                                        whiteSpace: 'nowrap',
                                     }}
                                 >
-                                    Patient
+                                    {patient?.fullName || 'Patient'}
                                 </Typography>
 
                                 <Typography
@@ -346,14 +345,14 @@ export default function Header() {
 
             {/* Profile Drawer */}
 
-            <ProfileDrawer
-                open={
-                    profileDrawerOpen
-                }
-                onClose={
-                    handleProfileDrawerClose
-                }
-            />
+            {profileDrawerOpen && (
+                <ProfileDrawer
+                    open={profileDrawerOpen}
+                    onClose={() =>
+                        setProfileDrawerOpen(false)
+                    }
+                />
+            )}
         </>
     );
 }

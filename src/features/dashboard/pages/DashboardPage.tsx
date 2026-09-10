@@ -19,8 +19,8 @@ import { usePatientDashboard } from '../../patient/hooks/usePatientDashboard';
 
 export default function DashboardPage() {
   const {
-    dashboard,
-    loading,
+    data: dashboard,
+    isLoading: loading,
     error,
   } = usePatientDashboard();
 
@@ -38,7 +38,9 @@ export default function DashboardPage() {
     return (
       <AppLayout>
         <Typography color="error">
-          {error}
+          {error instanceof Error
+            ? error.message
+            : 'Unable to load your dashboard.'}
         </Typography>
       </AppLayout>
     );
