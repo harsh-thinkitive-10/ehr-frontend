@@ -53,7 +53,8 @@ export default function AuthLayout({
   return (
     <Box
       sx={{
-        minHeight: '100vh',
+        height: '100vh',
+        overflow: 'hidden',
         display: 'flex',
         bgcolor: '#fff',
       }}
@@ -64,7 +65,7 @@ export default function AuthLayout({
         sx={{
           position: 'relative',
           width: '50%',
-          minHeight: '100vh',
+          height: '100%',
           overflow: 'hidden',
           display: {
             xs: 'none',
@@ -314,7 +315,7 @@ export default function AuthLayout({
             xs: '100%',
             md: '50%',
           },
-          minHeight: '100vh',
+          height: '100%',
           display: 'flex',
           flexDirection: 'column',
           bgcolor: '#fff',
