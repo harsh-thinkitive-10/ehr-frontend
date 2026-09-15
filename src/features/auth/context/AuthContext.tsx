@@ -13,7 +13,7 @@ import {
 
 import { getRolesFromToken } from '../util/jwt';
 
-import { AuthContext } from './authContext';
+import { AuthContext } from './context';
 
 interface AuthProviderProps {
   children: ReactNode;
