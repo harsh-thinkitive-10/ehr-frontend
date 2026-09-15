@@ -612,7 +612,9 @@ export default function AppointmentListPage() {
                   >
                     <Stack
                       spacing={1}
-                      alignItems="center"
+                      sx={{
+                        alignItems: 'center',
+                      }}
                     >
                       <EventIcon
                         sx={{

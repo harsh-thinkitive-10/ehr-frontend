@@ -82,9 +82,11 @@ export default function ResetPasswordPage() {
           <Box>
             <Typography
               variant="h4"
-              fontWeight={700}
               color="text.primary"
               gutterBottom
+              sx={{
+                fontWeight: 700,
+              }}
             >
               Reset Password
             </Typography>

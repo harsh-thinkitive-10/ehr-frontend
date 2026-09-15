@@ -5,14 +5,10 @@ import {
 } from '@mui/material';
 
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-
-import AppLayout from '../../../layouts/AppLayout/AppLayout';
-
 import ChangePasswordForm from '../../auth/components/password/ChangePasswordForm';
 
 export default function SettingsPage() {
   return (
-    <AppLayout>
       <Stack spacing={4}>
         <Box>
           <Typography
@@ -94,6 +90,5 @@ export default function SettingsPage() {
           </Stack>
         </Box>
       </Stack>
-    </AppLayout>
   );
 }
