@@ -1,23 +1,19 @@
 import {
-  createContext,
-  useContext,
   useState,
   type ReactNode,
 } from 'react';
 
+import type { Role } from '../constant/roles';
+
 import { tokenService } from '../services/tokenService';
+import {
+  authService,
+  type LoginResponse,
+} from '../services/authService';
 
-interface AuthContextValue {
-  accessToken: string | null;
-  isAuthenticated: boolean;
-  login: (accessToken: string) => void;
-  logout: () => void;
-}
+import { getRolesFromToken } from '../util/jwt';
 
-const AuthContext =
-  createContext<AuthContextValue | undefined>(
-    undefined,
-  );
+import { AuthContext } from './authContext';
 
 interface AuthProviderProps {
   children: ReactNode;
@@ -31,21 +27,40 @@ export function AuthProvider({
       tokenService.getAccessToken(),
     );
 
-  const login = (token: string) => {
-    tokenService.setAccessToken(token);
-    setAccessToken(token);
+  const [roles, setRoles] =
+    useState<Role[]>([]);
+
+  const login = (data: LoginResponse) => {
+    tokenService.setTokens(
+      data.access_token,
+      data.refresh_token,
+    );
+
+    setAccessToken(data.access_token);
+
+    const tokenRoles =
+      getRolesFromToken(data.access_token);
+
+    setRoles(tokenRoles);
   };
 
-  const logout = () => {
-    tokenService.clearAccessToken();
-    setAccessToken(null);
+  const logout = async () => {
+    try {
+      await authService.logout();
+    } finally {
+      tokenService.clearTokens();
+      setAccessToken(null);
+      setRoles([]);
+    }
   };
 
   return (
     <AuthContext.Provider
       value={{
         accessToken,
-        isAuthenticated: accessToken !== null,
+        roles,
+        isAuthenticated:
+          accessToken !== null,
         login,
         logout,
       }}
@@ -53,16 +68,4 @@ export function AuthProvider({
       {children}
     </AuthContext.Provider>
   );
-}
-
-export function useAuth() {
-  const context = useContext(AuthContext);
-
-  if (!context) {
-    throw new Error(
-      'useAuth must be used inside AuthProvider',
-    );
-  }
-
-  return context;
 }

@@ -1,15 +1,8 @@
-import type { ReactNode } from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, Outlet } from 'react-router-dom';
 
 import { useAuth } from '../features/auth/context';
 
-interface ProtectedRouteProps {
-  children: ReactNode;
-}
-
-export default function ProtectedRoute({
-  children,
-}: ProtectedRouteProps) {
+export default function ProtectedRoute() {
   const { isAuthenticated } = useAuth();
 
   if (!isAuthenticated) {
@@ -21,5 +14,5 @@ export default function ProtectedRoute({
     );
   }
 
-  return <>{children}</>;
+  return <Outlet />;
 }

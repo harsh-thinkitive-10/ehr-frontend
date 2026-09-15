@@ -3,7 +3,11 @@ import { Stack } from '@mui/material';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import {
+  Link,
+  useNavigate,
+} from 'react-router-dom';
+import { Typography } from '@mui/material';
 
 import { Input, Button } from '../../../component/ui';
 
@@ -44,7 +48,7 @@ export default function LoginForm() {
       const response = await authService.login(data);
 
       // Store access token and update authentication state
-      login(response.access_token);
+      login(response);
 
       // Navigate to dashboard
       navigate('/dashboard', {
@@ -80,7 +84,7 @@ export default function LoginForm() {
         } else if (error.response) {
           setApiError(
             error.response.data?.message ??
-              `Login failed (${error.response.status}).`,
+            `Login failed (${error.response.status}).`,
           );
         } else if (error.request) {
           setApiError(
@@ -136,6 +140,19 @@ export default function LoginForm() {
           </div>
         )}
 
+        <Typography
+          component={Link}
+          to="/forgot-password"
+          variant="body2"
+          sx={{
+            alignSelf: 'flex-end',
+            textDecoration: 'none',
+            color: 'primary.main',
+            fontWeight: 600,
+          }}
+        >
+          Forgot Password?
+        </Typography>
         <Button
           type="submit"
           disabled={isSubmitting}

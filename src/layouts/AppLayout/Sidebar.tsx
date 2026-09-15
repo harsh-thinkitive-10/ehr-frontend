@@ -1,10 +1,9 @@
 import {
   Box,
   Divider,
-  IconButton,
   Stack,
-  Tooltip,
   Typography,
+  IconButton,
 } from '@mui/material';
 
 import DashboardIcon from '@mui/icons-material/Dashboard';
@@ -14,7 +13,8 @@ import DescriptionIcon from '@mui/icons-material/Description';
 import MedicationIcon from '@mui/icons-material/Medication';
 import BarChartIcon from '@mui/icons-material/BarChart';
 import SettingsIcon from '@mui/icons-material/Settings';
-import FavoriteIcon from '@mui/icons-material/Favorite';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 
 import type { ReactNode } from 'react';
 
@@ -108,20 +108,55 @@ export default function Sidebar({
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            backgroundColor: '#1976d2',
+            backgroundColor: '#e8ecf0',
             color: '#ffffff',
+            backdropFilter: 'blur(10px)',
           }}
         >
-          <FavoriteIcon fontSize="small" />
+          <Box
+            component="img"
+            src="/logo.png"
+            alt="Company Logo"
+            sx={{
+              width: 30,
+              height: 30,
+              objectFit: 'contain'
+            }}
+          />
         </Box>
-        <Typography
+        {!collapsed && (
+          <Typography
+            sx={{
+              fontSize: '0.9rem',
+              fontWeight: 500,
+              whiteSpace: 'nowrap',
+            }}
+          >
+            CarePlus
+          </Typography>
+        )}
+
+        <IconButton
+          onClick={onToggle}
+          aria-label={
+            collapsed
+              ? 'Expand sidebar'
+              : 'Collapse sidebar'
+          }
+          size="small"
           sx={{
-            fontSize: '0.9rem',
-            fontWeight: 500,
+            ml: 'auto',
+            display: 'flex',
+            alignItems: ' left',
+            justifyContent: 'center',
           }}
         >
-          CarePlus
-        </Typography>
+          {collapsed ? (
+            <ChevronRightIcon />
+          ) : (
+            <ChevronLeftIcon />
+          )}
+        </IconButton>
       </Stack>
 
       <Divider />

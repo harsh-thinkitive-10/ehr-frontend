@@ -1,17 +1,18 @@
-import type { ReactNode } from 'react';
+import { Outlet } from 'react-router-dom';
+import { useState } from 'react';
 
 import { Box } from '@mui/material';
 
-import Sidebar from './Sidebar';
 import Header from './Header';
+import Sidebar from './Sidebar';
 
-interface AppLayoutProps {
-  children: ReactNode;
-}
 
-export default function AppLayout({
-  children,
-}: AppLayoutProps) {
+export default function AppLayout() {
+  const [collapsed, setCollapsed] = useState(false);
+
+  const handleSidebarToggle = () => {
+    setCollapsed((previous) => !previous);
+  };
   return (
     <Box
       sx={{
@@ -19,8 +20,10 @@ export default function AppLayout({
         backgroundColor: '#f8fafc',
       }}
     >
-      <Sidebar />
-
+      <Sidebar 
+        collapsed={collapsed}
+        onToggle={handleSidebarToggle}
+      />
       <Header />
 
       <Box
@@ -36,7 +39,7 @@ export default function AppLayout({
             p: 4,
           }}
         >
-          {children}
+          {<Outlet />}
         </Box>
       </Box>
     </Box>

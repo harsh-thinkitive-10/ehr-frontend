@@ -13,8 +13,6 @@ import {
   StatCard,
 } from '../../../component/ui';
 
-import AppLayout from '../../../layouts/AppLayout/AppLayout';
-
 import { usePatientDashboard } from '../../patient/hooks/usePatientDashboard';
 
 export default function DashboardPage() {
@@ -26,38 +24,32 @@ export default function DashboardPage() {
 
   if (loading) {
     return (
-      <AppLayout>
-        <Typography>
-          Loading dashboard...
-        </Typography>
-      </AppLayout>
+      <Typography>
+        Loading dashboard...
+      </Typography>
     );
   }
 
   if (error) {
     return (
-      <AppLayout>
-        <Typography color="error">
-          {error instanceof Error
-            ? error.message
-            : 'Unable to load your dashboard.'}
-        </Typography>
-      </AppLayout>
+      <Typography color="error">
+        {error instanceof Error
+          ? error.message
+          : 'Unable to load your dashboard.'}
+      </Typography>
     );
   }
 
   if (!dashboard) {
     return (
-      <AppLayout>
-        <Typography>
-          Dashboard data not found.
-        </Typography>
-      </AppLayout>
+      <Typography>
+        Dashboard data not found.
+      </Typography>
     );
   }
 
   return (
-    <AppLayout>
+    <>
       {/* Page Header */}
 
       <Stack
@@ -152,6 +144,6 @@ export default function DashboardPage() {
           />
         </Grid>
       </Grid>
-    </AppLayout>
+    </>
   );
 }

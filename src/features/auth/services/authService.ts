@@ -11,9 +11,41 @@ export interface LoginResponse {
   expires_in: number;
 }
 
+
+export interface RefreshResponse {
+  success: boolean;
+  access_token: string;
+  refresh_token: string;
+  expires_in: number;
+  token_type: string;
+}
+
+export interface LogoutResponse {
+  success: boolean;
+  message: string;
+}
+
 export interface ChangePasswordRequest {
   currentPassword: string;
   newPassword: string;
+}
+export interface ForgotPasswordRequest {
+  username: string;
+}
+
+export interface ForgotPasswordResponse {
+  success: boolean;
+  message: string;
+}
+
+export interface ResetPasswordRequest {
+  token: string;
+  newPassword: string;
+}
+
+export interface ResetPasswordResponse {
+  success: boolean;
+  message: string;
 }
 
 export const authService = {
@@ -25,6 +57,28 @@ export const authService = {
 
     return response.data;
   },
+  async refresh(
+    refreshToken: string,
+  ): Promise<RefreshResponse> {
+    const response =
+      await apiClient.post<RefreshResponse>(
+        '/v1/auth/refresh',
+        {
+          refreshToken,
+        },
+      );
+
+    return response.data;
+  },
+
+  async logout(): Promise<LogoutResponse> {
+    const response =
+      await apiClient.post<LogoutResponse>(
+        '/v1/auth/logout',
+      );
+
+    return response.data;
+  },
 
   async changePassword(
     data: ChangePasswordRequest,
@@ -33,5 +87,28 @@ export const authService = {
       '/v1/auth/change-password',
       data,
     );
+  },
+  async requestPasswordReset(
+    data: ForgotPasswordRequest,
+  ): Promise<ForgotPasswordResponse> {
+    const response =
+      await apiClient.post<ForgotPasswordResponse>(
+        '/v1/auth/forgot-password',
+        data,
+      );
+
+    return response.data;
+  },
+
+  async resetPassword(
+    data: ResetPasswordRequest,
+  ): Promise<ResetPasswordResponse> {
+    const response =
+      await apiClient.post<ResetPasswordResponse>(
+        '/v1/auth/reset-password',
+        data,
+      );
+
+    return response.data;
   },
 };

@@ -24,6 +24,7 @@ interface Feature {
   description: string;
 }
 
+
 const features: Feature[] = [
   {
     icon: <PeopleIcon />,
@@ -136,11 +137,17 @@ export default function AuthLayout({
                 backdropFilter: 'blur(10px)',
               }}
             >
-              <FavoriteIcon
+              <Box
+                component="img"
+                src="/logo.png" // Replace with your actual image path or URL
+                alt="Company Logo"
                 sx={{
-                  fontSize: 28,
+                  width: 40,
+                  height: 40,
+                  objectFit: 'contain'
                 }}
               />
+
             </Box>
 
             <Box>
@@ -149,6 +156,7 @@ export default function AuthLayout({
                 sx={{
                   fontWeight: 700,
                   lineHeight: 1,
+                  color: 'rgba(255,255,255,0.78)',
                 }}
               >
                 CarePlus
@@ -156,6 +164,7 @@ export default function AuthLayout({
                   component="span"
                   sx={{
                     fontWeight: 400,
+                    color: 'rgba(255,255,255,0.65)',
                   }}
                 >
                   {' '}
@@ -176,13 +185,33 @@ export default function AuthLayout({
             </Box>
           </Stack>
 
+          {/* Quote */}
+
+          <Box
+            sx={{
+              mt: 'auto',
+              maxWidth: 420,
+            }}
+          >
+            <Typography
+              sx={{
+                fontStyle: 'italic',
+                color:
+                  'rgba(255,255,255,0.7)',
+                fontSize: '0.95rem',
+              }}
+            >
+              "Technology that cares, for a healthier
+              tomorrow."
+            </Typography>
+          </Box>
           {/* Hero */}
 
           <Box
             sx={{
               mt: {
                 md: 8,
-                lg: 10,
+                lg: 5,
               },
               maxWidth: 560,
             }}
@@ -283,27 +312,6 @@ export default function AuthLayout({
               </Stack>
             ))}
           </Stack>
-
-          {/* Quote */}
-
-          <Box
-            sx={{
-              mt: 'auto',
-              maxWidth: 420,
-            }}
-          >
-            <Typography
-              sx={{
-                fontStyle: 'italic',
-                color:
-                  'rgba(255,255,255,0.7)',
-                fontSize: '0.95rem',
-              }}
-            >
-              "Technology that cares, for a healthier
-              tomorrow."
-            </Typography>
-          </Box>
         </Stack>
       </Box>
 

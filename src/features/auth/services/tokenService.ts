@@ -1,4 +1,5 @@
 let accessToken: string | null = null;
+let refreshToken: string | null = null;
 
 export const tokenService = {
   getAccessToken(): string | null {
@@ -9,7 +10,24 @@ export const tokenService = {
     accessToken = token;
   },
 
-  clearAccessToken(): void {
+  getRefreshToken(): string | null {
+    return refreshToken;
+  },
+
+  setRefreshToken(token: string): void {
+    refreshToken = token;
+  },
+
+  setTokens(
+    newAccessToken: string,
+    newRefreshToken: string,
+  ): void {
+    accessToken = newAccessToken;
+    refreshToken = newRefreshToken;
+  },
+
+  clearTokens(): void {
     accessToken = null;
+    refreshToken = null;
   },
 };

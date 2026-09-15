@@ -97,7 +97,7 @@ export default function ProfileDrawer({
             <Box
                 sx={{
                     px: 3,
-                    py: 2.5,
+                    py: 1,
                 }}
             >
                 <Stack

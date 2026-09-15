@@ -79,7 +79,7 @@ export default function Header() {
                     left: 250,
                     width: 'calc(100% - 250px)',
                     backgroundColor: '#ffffff',
-                    color: '#172b4d',
+                    color: 'text.primary',
                     borderBottom:
                         '1px solid #e5e7eb',
                 }}
@@ -104,10 +104,9 @@ export default function Header() {
                             gap: 1,
                             px: 1.5,
                             borderRadius: '8px',
-                            backgroundColor:
-                                '#f8fafc',
-                            border:
-                                '1px solid #e5e7eb',
+                            backgroundColor:'background.default',
+                            border:1, 
+                            borderColor: 'divider',
                         }}
                     >
                         <SearchIcon
@@ -213,7 +212,7 @@ export default function Header() {
                                 <Typography
                                     sx={{
                                         fontWeight: 600,
-                                        color: '#172b4d',
+                                        color: 'text.primary',
                                         whiteSpace: 'nowrap',
                                     }}
                                 >
@@ -225,7 +224,7 @@ export default function Header() {
                                         fontSize:
                                             '0.75rem',
                                         color:
-                                            '#64748b',
+                                            'text.secondary',
                                         lineHeight:
                                             1.2,
                                     }}
@@ -290,7 +289,7 @@ export default function Header() {
                                     fontSize="small"
                                     sx={{
                                         color:
-                                            '#64748b',
+                                            'text.secondary',
                                     }}
                                 />
 
