@@ -204,8 +204,6 @@ export default function AdminAppointmentList() {
   const {
     data,
     isLoading,
-    isError,
-    error,
   } = useAdminAppointments({
     page,
     size: pageSize,
