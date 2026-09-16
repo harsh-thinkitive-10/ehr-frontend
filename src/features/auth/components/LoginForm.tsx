@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { Stack } from '@mui/material';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import axios from 'axios';
 import {
   Link,
   useNavigate,
@@ -54,57 +53,10 @@ export default function LoginForm() {
       navigate('/dashboard', {
         replace: true,
       });
-    } catch (error) {
-      console.error('LOGIN ERROR:', error);
-
-      if (axios.isAxiosError(error)) {
-        console.error(
-          'STATUS:',
-          error.response?.status,
-        );
-
-        console.error(
-          'DATA:',
-          error.response?.data,
-        );
-
-        console.error(
-          'URL:',
-          error.config?.url,
-        );
-
-        if (error.response?.status === 401) {
-          setApiError(
-            'Invalid username or password.',
-          );
-        } else if (error.response?.status === 403) {
-          setApiError(
-            'You are not allowed to access this account.',
-          );
-        } else if (error.response) {
-          setApiError(
-            error.response.data?.message ??
-            `Login failed (${error.response.status}).`,
-          );
-        } else if (error.request) {
-          setApiError(
-            'Cannot connect to the server.',
-          );
-        } else {
-          setApiError(
-            'Something went wrong. Please try again.',
-          );
-        }
-      } else {
-        console.error(
-          'UNKNOWN ERROR:',
-          error,
-        );
-
-        setApiError(
+    } catch {
+      setApiError(
           'Something went wrong. Please try again.',
         );
-      }
     }
   };
 

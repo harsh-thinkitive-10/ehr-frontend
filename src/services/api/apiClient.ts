@@ -51,10 +51,10 @@ apiClient.interceptors.response.use(
   async (error: AxiosError) => {
     const originalRequest =
       error.config as
-        | (InternalAxiosRequestConfig & {
-            _retry?: boolean;
-          })
-        | undefined;
+      | (InternalAxiosRequestConfig & {
+        _retry?: boolean;
+      })
+      | undefined;
 
     if (
       error.response?.status !== 401 ||
@@ -110,6 +110,7 @@ apiClient.interceptors.response.use(
       return apiClient(originalRequest);
     } catch (refreshError) {
       tokenService.clearTokens();
+      tokenService.notifySessionExpired();
 
       return Promise.reject(refreshError);
     }

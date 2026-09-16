@@ -1,5 +1,8 @@
 let accessToken: string | null = null;
+
 let refreshToken: string | null = null;
+
+let onSessionExpired: (() => void) | null = null;
 
 export const tokenService = {
   getAccessToken(): string | null {
@@ -29,5 +32,15 @@ export const tokenService = {
   clearTokens(): void {
     accessToken = null;
     refreshToken = null;
+  },
+
+  setSessionExpiredHandler(
+    handler: (() => void) | null,
+  ): void {
+    onSessionExpired = handler;
+  },
+
+  notifySessionExpired(): void {
+    onSessionExpired?.();
   },
 };

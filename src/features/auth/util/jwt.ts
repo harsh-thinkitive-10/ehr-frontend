@@ -1,6 +1,15 @@
-import { APPLICATION_ROLES, type Role } from '../constant/roles';
+import {
+  APPLICATION_ROLES,
+  type Role,
+} from '../constant/roles';
 
 interface JwtPayload {
+  preferred_username?: string;
+  email?: string;
+  name?: string;
+  given_name?: string;
+  family_name?: string;
+
   realm_access?: {
     roles?: string[];
   };
@@ -38,6 +47,24 @@ export function decodeJwtPayload(
   } catch {
     return null;
   }
+}
+
+export interface AuthUser {
+  username: string | null;
+  email: string | null;
+  name: string | null;
+}
+
+export function getUserFromToken(
+  token: string,
+): AuthUser {
+  const payload = decodeJwtPayload(token);
+
+  return {
+    username: payload?.preferred_username ?? null,
+    email: payload?.email ?? null,
+    name: payload?.name ?? null,
+  };
 }
 
 export function getRolesFromToken(

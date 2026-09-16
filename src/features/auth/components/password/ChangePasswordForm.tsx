@@ -78,11 +78,8 @@ export default function ChangePasswordForm() {
             );
 
             resetForm();
-        } catch (error) {
-            console.error(
-                'Failed to change password:',
-                error,
-            );
+        } catch {
+            // Error handling is done via the `error` state from the mutation
         }
     };
 

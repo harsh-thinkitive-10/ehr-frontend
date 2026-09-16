@@ -1,59 +1,34 @@
 import { apiClient } from '../../../services/api/apiClient';
 
-export interface PatientAppointment {
-  appointmentDate: string;
-  consultationFee: number;
-  doctorEmail: string;
-  doctorFullName: string;
-  doctorPhoneNumber: string;
-  doctorSpecialization: string;
-  reasonForVisit: string;
-  status: AppointmentStatus;
-}
+import type {
+  PatientAppointmentPage,
+} from '../types/appointment';
 
-export type AppointmentStatus =
-  | 'SCHEDULED'
-  | 'COMPLETED'
-  | 'PENDING'
-  | 'CHECK_IN'
-  | 'CANCELLED'
-  | 'NO_SHOW'
-  | 'RESCHEDULED'
-  | 'CLOSED';
-
-export interface AppointmentPage {
-  content: PatientAppointment[];
-  empty: boolean;
-  first: boolean;
-  last: boolean;
-  number: number;
-  numberOfElements: number;
-  size: number;
-  totalElements: number;
-  totalPages: number;
-}
-
-export interface AppointmentListResponse {
+interface ApiResponse<T> {
   code: string;
-  data: AppointmentPage;
+  data: T;
   message: string;
+}
+
+export interface AppointmentListParams {
+  page: number;
+  size: number;
 }
 
 export const appointmentService = {
   async getPatientAppointments(
     page: number,
     size: number,
-  ): Promise<AppointmentListResponse> {
+  ): Promise<ApiResponse<PatientAppointmentPage>> {
     const response =
-      await apiClient.get<AppointmentListResponse>(
-        '/v1/appointment/patient',
-        {
-          params: {
-            page,
-            size,
-          },
+      await apiClient.get<
+        ApiResponse<PatientAppointmentPage>
+      >('/v1/appointment/patient', {
+        params: {
+          page,
+          size,
         },
-      );
+      });
 
     return response.data;
   },

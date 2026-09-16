@@ -1,4 +1,5 @@
 import {
+  useEffect,
   useState,
   type ReactNode,
 } from 'react';
@@ -11,9 +12,14 @@ import {
   type LoginResponse,
 } from '../services/authService';
 
-import { getRolesFromToken } from '../util/jwt';
+import {
+  getRolesFromToken,
+  getUserFromToken,
+  type AuthUser,
+} from '../util/jwt';
 
 import { AuthContext } from './context';
+import { queryClient } from '../../../app/queryClient';
 
 interface AuthProviderProps {
   children: ReactNode;
@@ -30,6 +36,22 @@ export function AuthProvider({
   const [roles, setRoles] =
     useState<Role[]>([]);
 
+  const [user, setUser] =
+    useState<AuthUser | null>(null);
+
+  useEffect(() => {
+    tokenService.setSessionExpiredHandler(() => {
+      queryClient.clear();
+      setAccessToken(null);
+      setRoles([]);
+      setUser(null);
+    });
+
+    return () => {
+      tokenService.setSessionExpiredHandler(null);
+    };
+  }, []);
+
   const login = (data: LoginResponse) => {
     tokenService.setTokens(
       data.access_token,
@@ -41,7 +63,11 @@ export function AuthProvider({
     const tokenRoles =
       getRolesFromToken(data.access_token);
 
+    const authenticatedUser =
+      getUserFromToken(data.access_token);
+
     setRoles(tokenRoles);
+    setUser(authenticatedUser);
   };
 
   const logout = async () => {
@@ -49,8 +75,10 @@ export function AuthProvider({
       await authService.logout();
     } finally {
       tokenService.clearTokens();
+      queryClient.clear();
       setAccessToken(null);
       setRoles([]);
+      setUser(null);
     }
   };
 
@@ -59,6 +87,7 @@ export function AuthProvider({
       value={{
         accessToken,
         roles,
+        user,
         isAuthenticated:
           accessToken !== null,
         login,

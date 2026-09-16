@@ -1,6 +1,10 @@
-import { useQuery } from '@tanstack/react-query';
+import {
+  keepPreviousData,
+  useQuery,
+} from '@tanstack/react-query';
 
 import { appointmentService } from '../services/appointmentService';
+
 import { appointmentKeys } from './appointmentKeys';
 
 export function usePatientAppointments(
@@ -8,7 +12,10 @@ export function usePatientAppointments(
   size: number,
 ) {
   return useQuery({
-    queryKey: appointmentKeys.patient(page, size),
+    queryKey: appointmentKeys.patient(
+      page,
+      size,
+    ),
 
     queryFn: () =>
       appointmentService.getPatientAppointments(
@@ -16,7 +23,6 @@ export function usePatientAppointments(
         size,
       ),
 
-    placeholderData: (previousData) =>
-      previousData,
+    placeholderData: keepPreviousData,
   });
 }

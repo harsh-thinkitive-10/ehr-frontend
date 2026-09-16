@@ -28,6 +28,8 @@ import EventIcon from '@mui/icons-material/Event';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import FilterListIcon from '@mui/icons-material/FilterList';
 
+import BookAppointmentDialog from '../components/BookAppointmentDialog';
+
 import {
   usePatientAppointments,
 } from '../hooks/usePatientAppointments';
@@ -35,7 +37,7 @@ import {
 import type {
   AppointmentStatus,
   PatientAppointment,
-} from '../services/appointmentService';
+} from '../types/appointment';
 
 type AppointmentFilter =
   | 'ALL'
@@ -47,55 +49,57 @@ const appointmentFilters: {
   value: AppointmentFilter;
   label: string;
 }[] = [
-    {
-      value: 'ALL',
-      label: 'All',
-    },
-    {
-      value: 'SCHEDULED',
-      label: 'Scheduled',
-    },
-    {
-      value: 'PENDING',
-      label: 'Pending',
-    },
-    {
-      value: 'CHECK_IN',
-      label: 'Check In',
-    },
-    {
-      value: 'COMPLETED',
-      label: 'Completed',
-    },
-    {
-      value: 'CANCELLED',
-      label: 'Cancelled',
-    },
-    {
-      value: 'NO_SHOW',
-      label: 'No Show',
-    },
-    {
-      value: 'RESCHEDULED',
-      label: 'Rescheduled',
-    },
-    {
-      value: 'CLOSED',
-      label: 'Closed',
-    },
-  ];
+  {
+    value: 'ALL',
+    label: 'All',
+  },
+  {
+    value: 'SCHEDULED',
+    label: 'Scheduled',
+  },
+  {
+    value: 'PENDING',
+    label: 'Pending',
+  },
+  {
+    value: 'CHECK_IN',
+    label: 'Check In',
+  },
+  {
+    value: 'COMPLETED',
+    label: 'Completed',
+  },
+  {
+    value: 'CANCELLED',
+    label: 'Cancelled',
+  },
+  {
+    value: 'NO_SHOW',
+    label: 'No Show',
+  },
+  {
+    value: 'RESCHEDULED',
+    label: 'Rescheduled',
+  },
+  {
+    value: 'CLOSED',
+    label: 'Closed',
+  },
+];
 
 function getDoctorInitials(name: string) {
   return name
     .split(' ')
     .filter(Boolean)
     .slice(0, 2)
-    .map((word) => word[0])
+    .map((word: string) => word[0])
     .join('')
     .toUpperCase();
 }
 
-function formatAppointmentDate(date: string) {
+function formatAppointmentDate(
+  date: string,
+) {
   const value = new Date(date);
 
   return {
@@ -188,6 +192,11 @@ export default function AppointmentListPage() {
   const [filterAnchorEl, setFilterAnchorEl] =
     useState<null | HTMLElement>(null);
 
+  const [
+    bookAppointmentOpen,
+    setBookAppointmentOpen,
+  ] = useState(false);
+
   const {
     data,
     isLoading,
@@ -223,7 +232,9 @@ export default function AppointmentListPage() {
   const handleFilterOpen = (
     event: React.MouseEvent<HTMLElement>,
   ) => {
-    setFilterAnchorEl(event.currentTarget);
+    setFilterAnchorEl(
+      event.currentTarget,
+    );
   };
 
   const handleFilterClose = () => {
@@ -254,6 +265,14 @@ export default function AppointmentListPage() {
       Number(event.target.value),
     );
     setPage(0);
+  };
+
+  const handleBookAppointment = () => {
+    setBookAppointmentOpen(true);
+  };
+
+  const handleCloseBookAppointment = () => {
+    setBookAppointmentOpen(false);
   };
 
   if (isError) {
@@ -359,12 +378,8 @@ export default function AppointmentListPage() {
 
           <Menu
             anchorEl={filterAnchorEl}
-            open={
-              Boolean(filterAnchorEl)
-            }
-            onClose={
-              handleFilterClose
-            }
+            open={Boolean(filterAnchorEl)}
+            onClose={handleFilterClose}
             slotProps={{
               paper: {
                 sx: {
@@ -389,9 +404,7 @@ export default function AppointmentListPage() {
                 return (
                   <MenuItem
                     key={item.value}
-                    selected={
-                      isSelected
-                    }
+                    selected={isSelected}
                     onClick={() =>
                       handleFilterChange(
                         item.value,
@@ -446,6 +459,9 @@ export default function AppointmentListPage() {
             variant="contained"
             startIcon={
               <CalendarMonthIcon />
+            }
+            onClick={
+              handleBookAppointment
             }
             sx={{
               minHeight: 48,
@@ -601,7 +617,7 @@ export default function AppointmentListPage() {
 
             {!isLoading &&
               filteredAppointments.length ===
-              0 && (
+                0 && (
                 <TableRow>
                   <TableCell
                     colSpan={8}
@@ -646,13 +662,13 @@ export default function AppointmentListPage() {
                 </TableRow>
               )}
 
-            {/* APPOINTMENTS */}
+            {/* Appointments */}
 
             {!isLoading &&
               filteredAppointments.map(
                 (
-                  appointment,
-                  index,
+                  appointment: PatientAppointment,
+                  index: number,
                 ) => {
                   const date =
                     formatAppointmentDate(
@@ -898,6 +914,17 @@ export default function AppointmentListPage() {
             />
           )}
       </TableContainer>
+
+      {/* =========================
+          BOOK APPOINTMENT
+      ========================== */}
+
+      <BookAppointmentDialog
+        open={bookAppointmentOpen}
+        onClose={
+          handleCloseBookAppointment
+        }
+      />
     </Box>
   );
 }

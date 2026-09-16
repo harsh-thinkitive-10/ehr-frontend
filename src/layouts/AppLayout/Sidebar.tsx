@@ -6,59 +6,18 @@ import {
   IconButton,
 } from '@mui/material';
 
-import DashboardIcon from '@mui/icons-material/Dashboard';
-import PeopleIcon from '@mui/icons-material/People';
-import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
-import DescriptionIcon from '@mui/icons-material/Description';
-import MedicationIcon from '@mui/icons-material/Medication';
-import BarChartIcon from '@mui/icons-material/BarChart';
-import SettingsIcon from '@mui/icons-material/Settings';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 
-import type { ReactNode } from 'react';
-
 import { NavLink } from 'react-router-dom';
 
+import {
+  menuItems,
+  settingsMenuItem,
+} from './navigation';
 
-interface MenuItem {
-  label: string;
-  icon: ReactNode;
-  path: string;
-}
-
-const menuItems: MenuItem[] = [
-  {
-    label: 'Dashboard',
-    icon: <DashboardIcon />,
-    path: '/dashboard',
-  },
-  {
-    label: 'Patients',
-    icon: <PeopleIcon />,
-    path: '/patients',
-  },
-  {
-    label: 'Appointments',
-    icon: <CalendarMonthIcon />,
-    path: '/appointments',
-  },
-  {
-    label: 'Medical Records',
-    icon: <DescriptionIcon />,
-    path: '/medical-records',
-  },
-  {
-    label: 'Prescriptions',
-    icon: <MedicationIcon />,
-    path: '/prescriptions',
-  },
-  {
-    label: 'Reports',
-    icon: <BarChartIcon />,
-    path: '/reports',
-  },
-];
+import { useAuth } from '../../features/auth/context';
+import { hasAnyRole } from '../../features/auth/util/authorization';
 
 interface SidebarProps {
   collapsed: boolean;
@@ -69,6 +28,55 @@ export default function Sidebar({
   collapsed,
   onToggle,
 }: SidebarProps) {
+  const { roles } = useAuth();
+
+  /*
+   * Show only navigation items that the
+   * current user's role can access.
+   */
+  const visibleMenuItems = menuItems.filter(
+    (item) =>
+      hasAnyRole(
+        roles,
+        item.allowedRoles,
+      ),
+  );
+
+  /*
+   * Check whether the current user can
+   * access Settings.
+   */
+  const canAccessSettings =
+    hasAnyRole(
+      roles,
+      settingsMenuItem.allowedRoles,
+    );
+
+  /*
+   * Resolve role-specific routes.
+   *
+   * The navigation configuration keeps
+   * /appointments as the common logical path.
+   *
+   * The actual route depends on the user's role.
+   */
+  const getMenuPath = (path: string): string => {
+    if (
+      path === '/appointments' &&
+      roles.includes('ADMIN')
+    ) {
+      return '/admin/appointments';
+    }
+
+    if (
+      path === '/appointments' &&
+      roles.includes('DOCTOR')
+    ) {
+      return '/doctor/appointments';
+    }
+
+    return path;
+  };
 
   return (
     <Box
@@ -97,7 +105,6 @@ export default function Sidebar({
           px: collapsed ? 1.5 : 3,
           py: 2,
           alignItems: 'center',
-
         }}
       >
         <Box
@@ -111,6 +118,7 @@ export default function Sidebar({
             backgroundColor: '#e8ecf0',
             color: '#ffffff',
             backdropFilter: 'blur(10px)',
+            flexShrink: 0,
           }}
         >
           <Box
@@ -120,10 +128,11 @@ export default function Sidebar({
             sx={{
               width: 30,
               height: 30,
-              objectFit: 'contain'
+              objectFit: 'contain',
             }}
           />
         </Box>
+
         {!collapsed && (
           <Typography
             sx={{
@@ -147,8 +156,9 @@ export default function Sidebar({
           sx={{
             ml: 'auto',
             display: 'flex',
-            alignItems: ' left',
+            alignItems: 'center',
             justifyContent: 'center',
+            flexShrink: 0,
           }}
         >
           {collapsed ? (
@@ -165,6 +175,7 @@ export default function Sidebar({
 
       <Stack
         component="nav"
+        aria-label="Main navigation"
         spacing={0.5}
         sx={{
           px: 2,
@@ -172,10 +183,77 @@ export default function Sidebar({
           flex: 1,
         }}
       >
-        {menuItems.map((item) => (
+        {visibleMenuItems.map((item) => {
+          /*
+           * Resolve the final route based on
+           * the current user's role.
+           */
+          const path = getMenuPath(item.path);
+
+          return (
+            <NavLink
+              key={item.label + path}
+              to={path}
+              style={{
+                textDecoration: 'none',
+                color: 'inherit',
+              }}
+            >
+              {({ isActive }) => (
+                <Box
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 1.5,
+                    px: 2,
+                    py: 1.4,
+                    minHeight: 48,
+                    borderRadius: '8px',
+                    color: isActive
+                      ? '#1976d2'
+                      : '#64748b',
+                    backgroundColor: isActive
+                      ? '#eaf3ff'
+                      : 'transparent',
+                    transition:
+                      'all 0.2s ease',
+
+                    '& svg': {
+                      fontSize: 20,
+                    },
+
+                    '&:hover': {
+                      backgroundColor: isActive
+                        ? '#eaf3ff'
+                        : '#f1f5f9',
+                      color: '#1976d2',
+                    },
+                  }}
+                >
+                  {item.icon}
+
+                  {!collapsed && (
+                    <Typography
+                      sx={{
+                        fontWeight: 600,
+                        color: 'text.primary',
+                        whiteSpace: 'nowrap',
+                      }}
+                    >
+                      {item.label}
+                    </Typography>
+                  )}
+                </Box>
+              )}
+            </NavLink>
+          );
+        })}
+
+        {/* Bottom actions */}
+
+        {canAccessSettings && (
           <NavLink
-            key={item.path}
-            to={item.path}
+            to={settingsMenuItem.path}
             style={{
               textDecoration: 'none',
               color: 'inherit',
@@ -189,6 +267,7 @@ export default function Sidebar({
                   gap: 1.5,
                   px: 2,
                   py: 1.4,
+                  minHeight: 48,
                   borderRadius: '8px',
                   color: isActive
                     ? '#1976d2'
@@ -196,7 +275,6 @@ export default function Sidebar({
                   backgroundColor: isActive
                     ? '#eaf3ff'
                     : 'transparent',
-                  transition: 'all 0.2s ease',
 
                   '& svg': {
                     fontSize: 20,
@@ -210,76 +288,25 @@ export default function Sidebar({
                   },
                 }}
               >
-                {item.icon}
+                {settingsMenuItem.icon}
 
-                <Typography
-                  variant="h6"
-                  sx={{
-                    fontWeight: 700,
-                    color: '#172b4d',
-                  }}
-                >
-                  {item.label}
-                </Typography>
+                {!collapsed && (
+                  <Typography
+                    sx={{
+                      fontSize: '1rem',
+                      fontWeight: 600,
+                      lineHeight: 1.5,
+                      color: 'text.primary',
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
+                    {settingsMenuItem.label}
+                  </Typography>
+                )}
               </Box>
             )}
           </NavLink>
-        ))}
-
-        {/* Bottom actions */}
-
-        <NavLink
-          to="/settings"
-          style={{
-            textDecoration: 'none',
-            color: 'inherit',
-          }}
-        >
-          {({ isActive }) => (
-            <Box
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 1.5,
-                px: 2,
-                py: 1.4,
-                minHeight: 48,
-                borderRadius: '8px',
-                color: isActive
-                  ? '#1976d2'
-                  : '#64748b',
-                backgroundColor: isActive
-                  ? '#eaf3ff'
-                  : 'transparent',
-
-                '& svg': {
-                  fontSize: 20,
-                },
-
-                '&:hover': {
-                  backgroundColor: isActive
-                    ? '#eaf3ff'
-                    : '#f1f5f9',
-                  color: '#1976d2',
-                },
-              }}
-            >
-              <SettingsIcon fontSize="small" />
-
-              <Typography
-                sx={{
-                  fontSize: '1rem',
-                  fontWeight: 700,
-                  lineHeight: 1.5,
-                  color: '#172b4d',
-                  whiteSpace: 'nowrap',
-                }}
-              >
-                Settings
-              </Typography>
-            </Box>
-          )}
-        </NavLink>
+        )}
       </Stack>
     </Box>
   );
