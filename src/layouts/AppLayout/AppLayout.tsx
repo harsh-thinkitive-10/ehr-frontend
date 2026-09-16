@@ -5,23 +5,28 @@ import { Box } from '@mui/material';
 import Header from './Header';
 import Sidebar from './Sidebar';
 
-const SIDEBAR_WIDTH = 250;
-const SIDEBAR_COLLAPSED_WIDTH = 72;
+export const SIDEBAR_WIDTH = 250;
+export const SIDEBAR_COLLAPSED_WIDTH = 72;
 
 export default function AppLayout() {
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] =
+    useState(false);
 
   const sidebarWidth = collapsed
     ? SIDEBAR_COLLAPSED_WIDTH
     : SIDEBAR_WIDTH;
 
   const handleSidebarToggle = () => {
-    setCollapsed((previous) => !previous);
+    setCollapsed(
+      (previous) => !previous,
+    );
   };
+
   return (
     <Box
       sx={{
         minHeight: '100vh',
+        width: '100%',
         backgroundColor: '#f8fafc',
       }}
     >
@@ -29,7 +34,10 @@ export default function AppLayout() {
         collapsed={collapsed}
         onToggle={handleSidebarToggle}
       />
-      <Header sidebarWidth={sidebarWidth} />
+
+      <Header
+        sidebarWidth={sidebarWidth}
+      />
 
       <Box
         component="main"
@@ -37,15 +45,18 @@ export default function AppLayout() {
           ml: `${sidebarWidth}px`,
           pt: '72px',
           minHeight: '100vh',
-          transition: 'margin-left 0.2s ease',
+          width: `calc(100% - ${sidebarWidth}px)`,
+          transition:
+            'margin-left 0.2s ease, width 0.2s ease',
         }}
       >
         <Box
           sx={{
             p: 4,
+            width: '100%',
           }}
         >
-          {<Outlet />}
+          <Outlet />
         </Box>
       </Box>
     </Box>

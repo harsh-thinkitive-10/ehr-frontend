@@ -24,6 +24,9 @@ interface SidebarProps {
   onToggle: () => void;
 }
 
+const SIDEBAR_WIDTH = 250;
+const SIDEBAR_COLLAPSED_WIDTH = 72;
+
 export default function Sidebar({
   collapsed,
   onToggle,
@@ -34,13 +37,13 @@ export default function Sidebar({
    * Show only navigation items that the
    * current user's role can access.
    */
-  const visibleMenuItems = menuItems.filter(
-    (item) =>
+  const visibleMenuItems =
+    menuItems.filter((item) =>
       hasAnyRole(
         roles,
         item.allowedRoles,
       ),
-  );
+    );
 
   /*
    * Check whether the current user can
@@ -55,12 +58,11 @@ export default function Sidebar({
   /*
    * Resolve role-specific routes.
    *
-   * The navigation configuration keeps
-   * /appointments as the common logical path.
-   *
-   * The actual route depends on the user's role.
+   * Preserve the existing menu path behavior.
    */
-  const getMenuPath = (path: string): string => {
+  const getMenuPath = (
+    path: string,
+  ): string => {
     if (
       path === '/appointments' &&
       roles.includes('ADMIN')
@@ -78,13 +80,18 @@ export default function Sidebar({
     return path;
   };
 
+  const sidebarWidth = collapsed
+    ? SIDEBAR_COLLAPSED_WIDTH
+    : SIDEBAR_WIDTH;
+
   return (
     <Box
       component="aside"
       sx={{
-        width: collapsed ? 72 : 250,
+        width: sidebarWidth,
         height: '100vh',
-        borderRight: '1px solid #e5e7eb',
+        borderRight:
+          '1px solid #e5e7eb',
         backgroundColor: '#ffffff',
         display: 'flex',
         flexDirection: 'column',
@@ -92,82 +99,76 @@ export default function Sidebar({
         left: 0,
         top: 0,
         zIndex: 1200,
-        transition: 'width 0.2s ease',
+        transition:
+          'width 0.2s ease',
         overflow: 'hidden',
       }}
     >
-      {/* Logo */}
+      {/* Logo / Header */}
 
-      <Stack
-        direction="row"
-        spacing={1.5}
+      <Box
         sx={{
-          px: collapsed ? 1.5 : 3,
-          py: 2,
-          alignItems: 'center',
+          position: 'relative',
+          height: 72,
+          flexShrink: 0,
         }}
       >
-        <Box
+        <Stack
+          direction="row"
+          spacing={1.5}
           sx={{
-            width: 38,
-            height: 38,
-            borderRadius: '10px',
-            display: 'flex',
+            height: '100%',
+            px: collapsed ? 0 : 3,
             alignItems: 'center',
-            justifyContent: 'center',
-            backgroundColor: '#e8ecf0',
-            color: '#ffffff',
-            backdropFilter: 'blur(10px)',
-            flexShrink: 0,
+            justifyContent: collapsed
+              ? 'center'
+              : 'flex-start',
           }}
         >
-          <Box
-            component="img"
-            src="/logo.png"
-            alt="Company Logo"
-            sx={{
-              width: 30,
-              height: 30,
-              objectFit: 'contain',
-            }}
-          />
-        </Box>
+          {/* Logo */}
 
-        {!collapsed && (
-          <Typography
+          <Box
             sx={{
-              fontSize: '0.9rem',
-              fontWeight: 500,
-              whiteSpace: 'nowrap',
+              width: 38,
+              height: 38,
+              borderRadius: '10px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              backgroundColor: '#e8ecf0',
+              color: '#ffffff',
+              backdropFilter:
+                'blur(10px)',
+              flexShrink: 0,
             }}
           >
-            CarePlus
-          </Typography>
-        )}
+            <Box
+              component="img"
+              src="/logo.png"
+              alt="Company Logo"
+              sx={{
+                width: 30,
+                height: 30,
+                objectFit: 'contain',
+              }}
+            />
+          </Box>
 
-        <IconButton
-          onClick={onToggle}
-          aria-label={
-            collapsed
-              ? 'Expand sidebar'
-              : 'Collapse sidebar'
-          }
-          size="small"
-          sx={{
-            ml: 'auto',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            flexShrink: 0,
-          }}
-        >
-          {collapsed ? (
-            <ChevronRightIcon />
-          ) : (
-            <ChevronLeftIcon />
+          {/* Brand */}
+
+          {!collapsed && (
+            <Typography
+              sx={{
+                fontSize: '0.9rem',
+                fontWeight: 500,
+                whiteSpace: 'nowrap',
+              }}
+            >
+              CarePlus
+            </Typography>
           )}
-        </IconButton>
-      </Stack>
+        </Stack>
+      </Box>
 
       <Divider />
 
@@ -178,136 +179,226 @@ export default function Sidebar({
         aria-label="Main navigation"
         spacing={0.5}
         sx={{
-          px: 2,
+          px: collapsed ? 1 : 2,
           py: 2,
           flex: 1,
+          overflowY: 'auto',
+          overflowX: 'hidden',
         }}
       >
-        {visibleMenuItems.map((item) => {
-          /*
-           * Resolve the final route based on
-           * the current user's role.
-           */
-          const path = getMenuPath(item.path);
+        {visibleMenuItems.map(
+          (item) => {
+            /*
+             * Resolve the final route based on
+             * the current user's role.
+             */
+            const path =
+              getMenuPath(
+                item.path,
+              );
 
-          return (
-            <NavLink
-              key={item.label + path}
-              to={path}
-              style={{
-                textDecoration: 'none',
-                color: 'inherit',
-              }}
-            >
-              {({ isActive }) => (
-                <Box
-                  sx={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 1.5,
-                    px: 2,
-                    py: 1.4,
-                    minHeight: 48,
-                    borderRadius: '8px',
-                    color: isActive
-                      ? '#1976d2'
-                      : '#64748b',
-                    backgroundColor: isActive
-                      ? '#eaf3ff'
-                      : 'transparent',
-                    transition:
-                      'all 0.2s ease',
+            return (
+              <NavLink
+                key={
+                  item.label + path
+                }
+                to={path}
+                style={{
+                  textDecoration:
+                    'none',
+                  color: 'inherit',
+                  width: '100%',
+                }}
+              >
+                {({ isActive }) => (
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      alignItems:
+                        'center',
+                      justifyContent:
+                        collapsed
+                          ? 'center'
+                          : 'flex-start',
+                      gap: collapsed
+                        ? 0
+                        : 1.5,
+                      px: collapsed
+                        ? 0
+                        : 2,
+                      py: 1.4,
+                      minHeight: 48,
+                      borderRadius:
+                        '8px',
+                      color: isActive
+                        ? '#1976d2'
+                        : '#64748b',
+                      backgroundColor:
+                        isActive
+                          ? '#eaf3ff'
+                          : 'transparent',
+                      transition:
+                        'all 0.2s ease',
 
-                    '& svg': {
-                      fontSize: 20,
-                    },
+                      '& svg': {
+                        fontSize: 20,
+                        flexShrink: 0,
+                      },
 
-                    '&:hover': {
-                      backgroundColor: isActive
-                        ? '#eaf3ff'
-                        : '#f1f5f9',
-                      color: '#1976d2',
-                    },
-                  }}
-                >
-                  {item.icon}
+                      '&:hover': {
+                        backgroundColor:
+                          isActive
+                            ? '#eaf3ff'
+                            : '#f1f5f9',
+                        color:
+                          '#1976d2',
+                      },
+                    }}
+                  >
+                    {item.icon}
 
-                  {!collapsed && (
-                    <Typography
-                      sx={{
-                        fontWeight: 600,
-                        color: 'text.primary',
-                        whiteSpace: 'nowrap',
-                      }}
-                    >
-                      {item.label}
-                    </Typography>
-                  )}
-                </Box>
-              )}
-            </NavLink>
-          );
-        })}
+                    {!collapsed && (
+                      <Typography
+                        sx={{
+                          fontWeight: 600,
+                          color:
+                            'text.primary',
+                          whiteSpace:
+                            'nowrap',
+                        }}
+                      >
+                        {item.label}
+                      </Typography>
+                    )}
+                  </Box>
+                )}
+              </NavLink>
+            );
+          },
+        )}
 
-        {/* Bottom actions */}
+        {/* Settings */}
 
         {canAccessSettings && (
           <NavLink
-            to={settingsMenuItem.path}
+            to={
+              settingsMenuItem.path
+            }
             style={{
-              textDecoration: 'none',
+              textDecoration:
+                'none',
               color: 'inherit',
+              width: '100%',
             }}
           >
             {({ isActive }) => (
               <Box
                 sx={{
                   display: 'flex',
-                  alignItems: 'center',
-                  gap: 1.5,
-                  px: 2,
+                  alignItems:
+                    'center',
+                  justifyContent:
+                    collapsed
+                      ? 'center'
+                      : 'flex-start',
+                  gap: collapsed
+                    ? 0
+                    : 1.5,
+                  px: collapsed
+                    ? 0
+                    : 2,
                   py: 1.4,
                   minHeight: 48,
-                  borderRadius: '8px',
+                  borderRadius:
+                    '8px',
                   color: isActive
                     ? '#1976d2'
                     : '#64748b',
-                  backgroundColor: isActive
-                    ? '#eaf3ff'
-                    : 'transparent',
+                  backgroundColor:
+                    isActive
+                      ? '#eaf3ff'
+                      : 'transparent',
 
                   '& svg': {
                     fontSize: 20,
+                    flexShrink: 0,
                   },
 
                   '&:hover': {
-                    backgroundColor: isActive
-                      ? '#eaf3ff'
-                      : '#f1f5f9',
-                    color: '#1976d2',
+                    backgroundColor:
+                      isActive
+                        ? '#eaf3ff'
+                        : '#f1f5f9',
+                    color:
+                      '#1976d2',
                   },
                 }}
               >
-                {settingsMenuItem.icon}
+                {
+                  settingsMenuItem.icon
+                }
 
                 {!collapsed && (
                   <Typography
                     sx={{
-                      fontSize: '1rem',
+                      fontSize:
+                        '1rem',
                       fontWeight: 600,
-                      lineHeight: 1.5,
-                      color: 'text.primary',
-                      whiteSpace: 'nowrap',
+                      lineHeight:
+                        1.5,
+                      color:
+                        'text.primary',
+                      whiteSpace:
+                        'nowrap',
                     }}
                   >
-                    {settingsMenuItem.label}
+                    {
+                      settingsMenuItem.label
+                    }
                   </Typography>
                 )}
               </Box>
             )}
           </NavLink>
         )}
+
       </Stack>
+
+      <Box>
+        {/* Collapse / Expand Button */}
+
+        <IconButton
+          onClick={onToggle}
+          aria-label={
+            collapsed
+              ? 'Expand sidebar'
+              : 'Collapse sidebar'
+          }
+          size="small"
+          sx={{
+            position: 'absolute',
+            top: '97vh',
+            right: collapsed
+              ? 4
+              : 8,
+            transform:
+              'translateY(-50%)',
+            width: 32,
+            height: 32,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: '#64748b',
+            zIndex: 2,
+          }}
+        >
+          {collapsed ? (
+            <ChevronRightIcon />
+          ) : (
+            <ChevronLeftIcon />
+          )}
+        </IconButton>
+      </Box>
     </Box>
   );
 }
