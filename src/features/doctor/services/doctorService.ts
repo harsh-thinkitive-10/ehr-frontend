@@ -2,6 +2,8 @@ import { apiClient } from '../../../services/api/apiClient';
 
 import type {
   DoctorListResponse,
+  RegisterDoctorRequest,
+  RegisterDoctorResponse,
 } from '../types/doctor';
 
 export interface DoctorListParams {
@@ -22,6 +24,18 @@ export const doctorService = {
         {
           params,
         },
+      );
+
+    return response.data;
+  },
+
+  async registerDoctor(
+    data: RegisterDoctorRequest,
+  ): Promise<RegisterDoctorResponse> {
+    const response =
+      await apiClient.post<RegisterDoctorResponse>(
+        '/v1/doctor/register',
+        data,
       );
 
     return response.data;
