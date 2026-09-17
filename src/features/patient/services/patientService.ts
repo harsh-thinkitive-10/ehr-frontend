@@ -1,12 +1,9 @@
 import { apiClient } from '../../../services/api/apiClient';
 
-import type {
-  Patient,
-  PatientDashboard,
-} from '../types/patient.types';
+import type { Patient } from '../types/patient';
+import type { PatientDashboard } from '../types/dashboard.types';
 
 import type {
-  PatientListParams,
   PatientListResponse,
   RegisterPatientRequest,
   RegisterPatientResponse,
@@ -18,6 +15,15 @@ export interface UpdatePatientProfileRequest {
   gender: string;
   phoneNumber: string;
   email: string;
+}
+
+export interface PatientListParams {
+  page?: number;
+  size?: number;
+  sort?: string;
+  search?: string;
+  gender?: string;
+  age?: number;
 }
 
 export const patientService = {
@@ -52,41 +58,13 @@ export const patientService = {
   },
 
   async getPatients(
-    params: PatientListParams = {},
+    params?: PatientListParams,
   ): Promise<PatientListResponse> {
     const response =
       await apiClient.get<PatientListResponse>(
         '/v1/patient/patients',
         {
-          params: {
-            page: params.page ?? 0,
-            size: params.size ?? 10,
-
-            ...(params.search?.trim()
-              ? {
-                  search:
-                    params.search.trim(),
-                }
-              : {}),
-
-            ...(params.gender
-              ? {
-                  gender: params.gender,
-                }
-              : {}),
-
-            ...(params.age !== undefined
-              ? {
-                  age: params.age,
-                }
-              : {}),
-
-            ...(params.sort
-              ? {
-                  sort: params.sort,
-                }
-              : {}),
-          },
+          params,
         },
       );
 
