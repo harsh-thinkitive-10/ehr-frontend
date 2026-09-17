@@ -16,6 +16,10 @@ import {
   settingsMenuItem,
 } from './navigation';
 
+import {
+  ROLES,
+} from '../../features/auth/constant/roles';
+
 import { useAuth } from '../../features/auth/context';
 import { hasAnyRole } from '../../features/auth/util/authorization';
 
@@ -34,7 +38,11 @@ export default function Sidebar({
   const { roles } = useAuth();
 
   /*
-   * Show only navigation items that the
+   * ---------------------------------------------------------
+   * Visible Navigation
+   * ---------------------------------------------------------
+   *
+   * Only show navigation items that the
    * current user's role can access.
    */
   const visibleMenuItems =
@@ -46,8 +54,9 @@ export default function Sidebar({
     );
 
   /*
-   * Check whether the current user can
-   * access Settings.
+   * ---------------------------------------------------------
+   * Settings Access
+   * ---------------------------------------------------------
    */
   const canAccessSettings =
     hasAnyRole(
@@ -56,23 +65,50 @@ export default function Sidebar({
     );
 
   /*
-   * Resolve role-specific routes.
+   * ---------------------------------------------------------
+   * Role-specific Route Mapping
+   * ---------------------------------------------------------
    *
-   * Preserve the existing menu path behavior.
+   * Navigation contains domain-level paths.
+   *
+   * Example:
+   *
+   * /patients
+   *
+   * Admin:
+   * /admin/patients
+   *
+   * Appointments:
+   * Patient -> /appointments
+   * Doctor  -> /doctor/appointments
+   * Admin   -> /admin/appointments
    */
   const getMenuPath = (
     path: string,
   ): string => {
+    /*
+     * Patient Management
+     */
+    if (
+      path === '/patients' &&
+      roles.includes(ROLES.ADMIN)
+    ) {
+      return '/admin/patients';
+    }
+
+    /*
+     * Appointment Management
+     */
     if (
       path === '/appointments' &&
-      roles.includes('ADMIN')
+      roles.includes(ROLES.ADMIN)
     ) {
       return '/admin/appointments';
     }
 
     if (
       path === '/appointments' &&
-      roles.includes('DOCTOR')
+      roles.includes(ROLES.DOCTOR)
     ) {
       return '/doctor/appointments';
     }
@@ -90,21 +126,22 @@ export default function Sidebar({
       sx={{
         width: sidebarWidth,
         height: '100vh',
-        borderRight:
-          '1px solid #e5e7eb',
-        backgroundColor: '#ffffff',
+        borderRight: 1,
+        borderColor: 'divider',
+        backgroundColor: 'background.paper',
         display: 'flex',
         flexDirection: 'column',
         position: 'fixed',
         left: 0,
         top: 0,
         zIndex: 1200,
-        transition:
-          'width 0.2s ease',
+        transition: 'width 0.2s ease',
         overflow: 'hidden',
       }}
     >
-      {/* Logo / Header */}
+      {/* -------------------------------------------------- */}
+      {/* Logo / Header                                       */}
+      {/* -------------------------------------------------- */}
 
       <Box
         sx={{
@@ -131,14 +168,11 @@ export default function Sidebar({
             sx={{
               width: 38,
               height: 38,
-              borderRadius: '10px',
+              borderRadius: 1.25,
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              backgroundColor: '#e8ecf0',
-              color: '#ffffff',
-              backdropFilter:
-                'blur(10px)',
+              backgroundColor: 'action.hover',
               flexShrink: 0,
             }}
           >
@@ -162,6 +196,7 @@ export default function Sidebar({
                 fontSize: '0.9rem',
                 fontWeight: 500,
                 whiteSpace: 'nowrap',
+                color: 'text.primary',
               }}
             >
               CarePlus
@@ -172,7 +207,9 @@ export default function Sidebar({
 
       <Divider />
 
-      {/* Navigation */}
+      {/* -------------------------------------------------- */}
+      {/* Main Navigation                                    */}
+      {/* -------------------------------------------------- */}
 
       <Stack
         component="nav"
@@ -189,8 +226,8 @@ export default function Sidebar({
         {visibleMenuItems.map(
           (item) => {
             /*
-             * Resolve the final route based on
-             * the current user's role.
+             * Resolve the final route according
+             * to the current user's role.
              */
             const path =
               getMenuPath(
@@ -200,12 +237,11 @@ export default function Sidebar({
             return (
               <NavLink
                 key={
-                  item.label + path
+                  `${item.label}-${path}`
                 }
                 to={path}
                 style={{
-                  textDecoration:
-                    'none',
+                  textDecoration: 'none',
                   color: 'inherit',
                   width: '100%',
                 }}
@@ -214,12 +250,10 @@ export default function Sidebar({
                   <Box
                     sx={{
                       display: 'flex',
-                      alignItems:
-                        'center',
-                      justifyContent:
-                        collapsed
-                          ? 'center'
-                          : 'flex-start',
+                      alignItems: 'center',
+                      justifyContent: collapsed
+                        ? 'center'
+                        : 'flex-start',
                       gap: collapsed
                         ? 0
                         : 1.5,
@@ -228,15 +262,13 @@ export default function Sidebar({
                         : 2,
                       py: 1.4,
                       minHeight: 48,
-                      borderRadius:
-                        '8px',
+                      borderRadius: 1,
                       color: isActive
-                        ? '#1976d2'
-                        : '#64748b',
-                      backgroundColor:
-                        isActive
-                          ? '#eaf3ff'
-                          : 'transparent',
+                        ? 'primary.main'
+                        : 'text.secondary',
+                      backgroundColor: isActive
+                        ? 'primary.light'
+                        : 'transparent',
                       transition:
                         'all 0.2s ease',
 
@@ -248,10 +280,10 @@ export default function Sidebar({
                       '&:hover': {
                         backgroundColor:
                           isActive
-                            ? '#eaf3ff'
-                            : '#f1f5f9',
+                            ? 'primary.light'
+                            : 'action.hover',
                         color:
-                          '#1976d2',
+                          'primary.main',
                       },
                     }}
                   >
@@ -261,10 +293,8 @@ export default function Sidebar({
                       <Typography
                         sx={{
                           fontWeight: 600,
-                          color:
-                            'text.primary',
-                          whiteSpace:
-                            'nowrap',
+                          color: 'text.primary',
+                          whiteSpace: 'nowrap',
                         }}
                       >
                         {item.label}
@@ -277,16 +307,15 @@ export default function Sidebar({
           },
         )}
 
-        {/* Settings */}
+        {/* ------------------------------------------------ */}
+        {/* Settings                                         */}
+        {/* ------------------------------------------------ */}
 
         {canAccessSettings && (
           <NavLink
-            to={
-              settingsMenuItem.path
-            }
+            to={settingsMenuItem.path}
             style={{
-              textDecoration:
-                'none',
+              textDecoration: 'none',
               color: 'inherit',
               width: '100%',
             }}
@@ -295,12 +324,10 @@ export default function Sidebar({
               <Box
                 sx={{
                   display: 'flex',
-                  alignItems:
-                    'center',
-                  justifyContent:
-                    collapsed
-                      ? 'center'
-                      : 'flex-start',
+                  alignItems: 'center',
+                  justifyContent: collapsed
+                    ? 'center'
+                    : 'flex-start',
                   gap: collapsed
                     ? 0
                     : 1.5,
@@ -309,15 +336,15 @@ export default function Sidebar({
                     : 2,
                   py: 1.4,
                   minHeight: 48,
-                  borderRadius:
-                    '8px',
+                  borderRadius: 1,
                   color: isActive
-                    ? '#1976d2'
-                    : '#64748b',
-                  backgroundColor:
-                    isActive
-                      ? '#eaf3ff'
-                      : 'transparent',
+                    ? 'primary.main'
+                    : 'text.secondary',
+                  backgroundColor: isActive
+                    ? 'primary.light'
+                    : 'transparent',
+                  transition:
+                    'all 0.2s ease',
 
                   '& svg': {
                     fontSize: 20,
@@ -327,29 +354,23 @@ export default function Sidebar({
                   '&:hover': {
                     backgroundColor:
                       isActive
-                        ? '#eaf3ff'
-                        : '#f1f5f9',
+                        ? 'primary.light'
+                        : 'action.hover',
                     color:
-                      '#1976d2',
+                      'primary.main',
                   },
                 }}
               >
-                {
-                  settingsMenuItem.icon
-                }
+                {settingsMenuItem.icon}
 
                 {!collapsed && (
                   <Typography
                     sx={{
-                      fontSize:
-                        '1rem',
+                      fontSize: '1rem',
                       fontWeight: 600,
-                      lineHeight:
-                        1.5,
-                      color:
-                        'text.primary',
-                      whiteSpace:
-                        'nowrap',
+                      lineHeight: 1.5,
+                      color: 'text.primary',
+                      whiteSpace: 'nowrap',
                     }}
                   >
                     {
@@ -361,12 +382,19 @@ export default function Sidebar({
             )}
           </NavLink>
         )}
-
       </Stack>
 
-      <Box>
-        {/* Collapse / Expand Button */}
+      {/* -------------------------------------------------- */}
+      {/* Collapse / Expand Button                           */}
+      {/* -------------------------------------------------- */}
 
+      <Box
+        sx={{
+          position: 'relative',
+          flexShrink: 0,
+          height: 48,
+        }}
+      >
         <IconButton
           onClick={onToggle}
           aria-label={
@@ -377,19 +405,21 @@ export default function Sidebar({
           size="small"
           sx={{
             position: 'absolute',
-            top: '97vh',
-            right: collapsed
-              ? 4
-              : 8,
-            transform:
-              'translateY(-50%)',
+            top: '50%',
+            right: collapsed ? 4 : 8,
+            transform: 'translateY(-50%)',
             width: 32,
             height: 32,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            color: '#64748b',
-            zIndex: 2,
+            color: 'text.secondary',
+
+            '&:hover': {
+              backgroundColor:
+                'action.hover',
+              color: 'primary.main',
+            },
           }}
         >
           {collapsed ? (

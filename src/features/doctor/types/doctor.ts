@@ -1,4 +1,4 @@
-export interface AppointmentProvider {
+export interface Doctor {
   uuid: string;
   fullName: string;
   specialization: string;
@@ -7,8 +7,8 @@ export interface AppointmentProvider {
   consultationFee: number;
 }
 
-export interface AppointmentProviderPage {
-  content: AppointmentProvider[];
+export interface DoctorPage {
+  content: Doctor[];
   empty: boolean;
   first: boolean;
   last: boolean;
@@ -19,8 +19,8 @@ export interface AppointmentProviderPage {
   totalPages: number;
 }
 
-export interface AppointmentProviderResponse {
+export interface DoctorListResponse {
   code: string;
-  data: AppointmentProviderPage;
+  data: DoctorPage;
   message: string;
 }

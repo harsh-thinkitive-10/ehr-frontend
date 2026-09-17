@@ -5,12 +5,12 @@ import {
 
 import {
   adminAppointmentKeys,
-} from '../constants/queryKeys';
+} from '../../admin/constants/queryKeys';
 
 import {
   adminAppointmentService,
   type AdminAppointmentListParams,
-} from '../services/adminAppointmentService';
+} from '../../admin/services/adminAppointmentService';
 
 export function useAdminAppointments(
   params: AdminAppointmentListParams,

@@ -1,16 +1,15 @@
 import { useQuery } from '@tanstack/react-query';
 
-import {
-  appointmentProviderService,
-} from '../services/appointmentProviderService';
+import { appointmentProviderService } from '../services/appointmentProviderService';
 
 export const appointmentProviderKeys = {
   all: ['appointment-providers'] as const,
 
-  list: () => [
-    ...appointmentProviderKeys.all,
-    'list',
-  ] as const,
+  list: () =>
+    [
+      ...appointmentProviderKeys.all,
+      'list',
+    ] as const,
 };
 
 export function useAppointmentProviders() {

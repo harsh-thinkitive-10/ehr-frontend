@@ -11,6 +11,10 @@
 
     "jsx": "react-jsx",
 
+    "paths": {
+      "@sdk/*": ["./src/sdk/*"]
+    },
+
     "types": ["vite/client"],
 
     "allowImportingTsExtensions": true,

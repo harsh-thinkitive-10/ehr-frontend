@@ -4,14 +4,20 @@ import type {
   AppointmentPatient,
 } from '../types/appointmentPatient';
 
+interface AppointmentPatientResponse {
+  code: string;
+  data: AppointmentPatient[];
+  message: string;
+}
+
 export const appointmentPatientService = {
   async getPatients(): Promise<
-    AppointmentPatient[]
+    AppointmentPatientResponse
   > {
     const response =
-      await apiClient.get<
-        AppointmentPatient[]
-      >('/v1/patient/patients');
+      await apiClient.get<AppointmentPatientResponse>(
+        '/v1/patient/patients',
+      );
 
     return response.data;
   },

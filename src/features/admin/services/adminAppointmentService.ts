@@ -2,7 +2,7 @@ import { apiClient } from '../../../services/api/apiClient';
 
 import type {
   AdminAppointmentPage,
-} from '../types/adminAppointment';
+} from '../../appointment/types/adminAppointment';
 
 export interface AdminAppointmentListParams {
   page: number;

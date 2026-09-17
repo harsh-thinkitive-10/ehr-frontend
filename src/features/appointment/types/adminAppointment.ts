@@ -1,21 +1,11 @@
-export type AdminAppointmentStatus =
-  | 'SCHEDULED'
-  | 'PENDING'
-  | 'CHECK_IN'
-  | 'COMPLETED'
-  | 'CANCELLED'
-  | 'NO_SHOW'
-  | 'RESCHEDULED'
-  | 'CLOSED';
+import type { AppointmentStatus } from './appointment';
 
 export interface AdminAppointment {
   appointmentDate: string;
-
+  consultationFee: number;
   reasonForVisit: string;
 
-  consultationFee: number;
-
-  status: AdminAppointmentStatus;
+  status: AppointmentStatus;
 
   patientFullName: string;
   patientAge: number;
@@ -31,15 +21,12 @@ export interface AdminAppointment {
 
 export interface AdminAppointmentPage {
   content: AdminAppointment[];
-
   empty: boolean;
   first: boolean;
   last: boolean;
-
   number: number;
   numberOfElements: number;
   size: number;
-
   totalElements: number;
   totalPages: number;
 }

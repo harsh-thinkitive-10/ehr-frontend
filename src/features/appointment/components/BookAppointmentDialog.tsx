@@ -295,13 +295,14 @@ export default function BookAppointmentDialog({
                 fieldState,
               }) => {
                 const selectedProvider =
-                  providers.find(
+                  providers?.find(
                     (
                       provider: AppointmentProvider,
                     ) =>
                       provider.uuid ===
                       field.value,
                   ) ?? null;
+                  
 
                 return (
                   <Autocomplete
