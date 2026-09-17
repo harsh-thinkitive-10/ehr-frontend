@@ -37,6 +37,7 @@ import DoctorAppointmentListPage from '../features/appointment/pages/DoctorAppoi
  */
 import AdminDashboardPage from '../features/admin/pages/AdminDashboardPage';
 import AdminAppointmentListPage from '../features/admin/pages/AdminAppointmentListPage';
+import ManagementPage from '../features/management/pages/ManagementPage';
 
 /*
  * Settings
@@ -310,6 +311,21 @@ export const router = createBrowserRouter([
               {
                 path: '/admin/dashboard',
                 element: <AdminDashboardPage />,
+              },
+            ],
+          },
+          {
+            element: (
+              <RoleRoute
+                allowedRoles={[
+                  ROLES.ADMIN,
+                ]}
+              />
+            ),
+            children: [
+              {
+                path: '/admin/management',
+                element: <ManagementPage />,
               },
             ],
           },

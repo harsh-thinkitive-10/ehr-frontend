@@ -1,15 +1,19 @@
-import { useQuery } from '@tanstack/react-query';
-
 import {
-  patientService,
-  type PatientListParams,
-} from '../services/patientService';
+  keepPreviousData,
+  useQuery,
+} from '@tanstack/react-query';
+
+import { patientService } from '../services/patientService';
+
+import type {
+  PatientListParams,
+} from '../types/patient';
 
 export const patientKeys = {
   all: ['patients'] as const,
 
   list: (
-    params: PatientListParams = {},
+    params: PatientListParams,
   ) =>
     [
       ...patientKeys.all,
@@ -22,13 +26,17 @@ export function usePatients(
   params: PatientListParams = {},
 ) {
   return useQuery({
-    queryKey: patientKeys.list(params),
+    queryKey:
+      patientKeys.list(params),
 
     queryFn: () =>
       patientService.getPatients(
         params,
       ),
 
-    staleTime: 5 * 60 * 1000,
+    placeholderData:
+      keepPreviousData,
+
+    staleTime: 30 * 1000,
   });
 }

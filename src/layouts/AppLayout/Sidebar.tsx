@@ -8,6 +8,7 @@ import {
 
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import SettingsSuggestIcon from '@mui/icons-material/SettingsSuggest';
 
 import { NavLink } from 'react-router-dom';
 
@@ -42,16 +43,55 @@ export default function Sidebar({
    * Visible Navigation
    * ---------------------------------------------------------
    *
-   * Only show navigation items that the
-   * current user's role can access.
+   * Only show navigation items that
+   * the current user's role can access.
+   *
+   * ADMIN:
+   * - Medical Records hidden
+   * - Prescriptions hidden
+   *
+   * Other roles:
+   * - Existing navigation remains unchanged.
    */
   const visibleMenuItems =
-    menuItems.filter((item) =>
-      hasAnyRole(
+    menuItems.filter((item) => {
+      /*
+       * Hide Medical Records and
+       * Prescriptions only for ADMIN.
+       */
+      if (
+        roles.includes(ROLES.ADMIN) &&
+        (
+          item.label ===
+            'Medical Records' ||
+          item.label ===
+            'Prescriptions'
+        )
+      ) {
+        return false;
+      }
+
+      return hasAnyRole(
         roles,
         item.allowedRoles,
-      ),
-    );
+      );
+    });
+
+  /*
+   * ---------------------------------------------------------
+   * Management Access
+   * ---------------------------------------------------------
+   *
+   * Management is ADMIN only.
+   *
+   * It will contain:
+   *
+   * - Location Management
+   * - Provider Management
+   * - Other admin management features later
+   */
+  const canAccessManagement =
+    roles.includes(ROLES.ADMIN);
 
   /*
    * ---------------------------------------------------------
@@ -79,6 +119,7 @@ export default function Sidebar({
    * /admin/patients
    *
    * Appointments:
+   *
    * Patient -> /appointments
    * Doctor  -> /doctor/appointments
    * Admin   -> /admin/appointments
@@ -128,7 +169,8 @@ export default function Sidebar({
         height: '100vh',
         borderRight: 1,
         borderColor: 'divider',
-        backgroundColor: 'background.paper',
+        backgroundColor:
+          'background.paper',
         display: 'flex',
         flexDirection: 'column',
         position: 'fixed',
@@ -172,7 +214,8 @@ export default function Sidebar({
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              backgroundColor: 'action.hover',
+              backgroundColor:
+                'action.hover',
               flexShrink: 0,
             }}
           >
@@ -226,8 +269,8 @@ export default function Sidebar({
         {visibleMenuItems.map(
           (item) => {
             /*
-             * Resolve the final route according
-             * to the current user's role.
+             * Resolve the final route
+             * according to current role.
              */
             const path =
               getMenuPath(
@@ -251,9 +294,10 @@ export default function Sidebar({
                     sx={{
                       display: 'flex',
                       alignItems: 'center',
-                      justifyContent: collapsed
-                        ? 'center'
-                        : 'flex-start',
+                      justifyContent:
+                        collapsed
+                          ? 'center'
+                          : 'flex-start',
                       gap: collapsed
                         ? 0
                         : 1.5,
@@ -266,9 +310,10 @@ export default function Sidebar({
                       color: isActive
                         ? 'primary.main'
                         : 'text.secondary',
-                      backgroundColor: isActive
-                        ? 'primary.light'
-                        : 'transparent',
+                      backgroundColor:
+                        isActive
+                          ? 'primary.light'
+                          : 'transparent',
                       transition:
                         'all 0.2s ease',
 
@@ -293,8 +338,10 @@ export default function Sidebar({
                       <Typography
                         sx={{
                           fontWeight: 600,
-                          color: 'text.primary',
-                          whiteSpace: 'nowrap',
+                          color:
+                            'text.primary',
+                          whiteSpace:
+                            'nowrap',
                         }}
                       >
                         {item.label}
@@ -308,12 +355,12 @@ export default function Sidebar({
         )}
 
         {/* ------------------------------------------------ */}
-        {/* Settings                                         */}
+        {/* ADMIN MANAGEMENT                                 */}
         {/* ------------------------------------------------ */}
 
-        {canAccessSettings && (
+        {canAccessManagement && (
           <NavLink
-            to={settingsMenuItem.path}
+            to="/admin/management"
             style={{
               textDecoration: 'none',
               color: 'inherit',
@@ -325,9 +372,10 @@ export default function Sidebar({
                 sx={{
                   display: 'flex',
                   alignItems: 'center',
-                  justifyContent: collapsed
-                    ? 'center'
-                    : 'flex-start',
+                  justifyContent:
+                    collapsed
+                      ? 'center'
+                      : 'flex-start',
                   gap: collapsed
                     ? 0
                     : 1.5,
@@ -340,9 +388,88 @@ export default function Sidebar({
                   color: isActive
                     ? 'primary.main'
                     : 'text.secondary',
-                  backgroundColor: isActive
-                    ? 'primary.light'
-                    : 'transparent',
+                  backgroundColor:
+                    isActive
+                      ? 'primary.light'
+                      : 'transparent',
+                  transition:
+                    'all 0.2s ease',
+
+                  '& svg': {
+                    fontSize: 20,
+                    flexShrink: 0,
+                  },
+
+                  '&:hover': {
+                    backgroundColor:
+                      isActive
+                        ? 'primary.light'
+                        : 'action.hover',
+                    color:
+                      'primary.main',
+                  },
+                }}
+              >
+                <SettingsSuggestIcon />
+
+                {!collapsed && (
+                  <Typography
+                    sx={{
+                      fontWeight: 600,
+                      color:
+                        'text.primary',
+                      whiteSpace:
+                        'nowrap',
+                    }}
+                  >
+                    Management
+                  </Typography>
+                )}
+              </Box>
+            )}
+          </NavLink>
+        )}
+
+        {/* ------------------------------------------------ */}
+        {/* Settings                                         */}
+        {/* ------------------------------------------------ */}
+
+        {canAccessSettings && (
+          <NavLink
+            to={
+              settingsMenuItem.path
+            }
+            style={{
+              textDecoration: 'none',
+              color: 'inherit',
+              width: '100%',
+            }}
+          >
+            {({ isActive }) => (
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent:
+                    collapsed
+                      ? 'center'
+                      : 'flex-start',
+                  gap: collapsed
+                    ? 0
+                    : 1.5,
+                  px: collapsed
+                    ? 0
+                    : 2,
+                  py: 1.4,
+                  minHeight: 48,
+                  borderRadius: 1,
+                  color: isActive
+                    ? 'primary.main'
+                    : 'text.secondary',
+                  backgroundColor:
+                    isActive
+                      ? 'primary.light'
+                      : 'transparent',
                   transition:
                     'all 0.2s ease',
 
@@ -369,8 +496,10 @@ export default function Sidebar({
                       fontSize: '1rem',
                       fontWeight: 600,
                       lineHeight: 1.5,
-                      color: 'text.primary',
-                      whiteSpace: 'nowrap',
+                      color:
+                        'text.primary',
+                      whiteSpace:
+                        'nowrap',
                     }}
                   >
                     {
@@ -406,19 +535,25 @@ export default function Sidebar({
           sx={{
             position: 'absolute',
             top: '50%',
-            right: collapsed ? 4 : 8,
-            transform: 'translateY(-50%)',
+            right: collapsed
+              ? 4
+              : 8,
+            transform:
+              'translateY(-50%)',
             width: 32,
             height: 32,
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'center',
-            color: 'text.secondary',
+            justifyContent:
+              'center',
+            color:
+              'text.secondary',
 
             '&:hover': {
               backgroundColor:
                 'action.hover',
-              color: 'primary.main',
+              color:
+                'primary.main',
             },
           }}
         >

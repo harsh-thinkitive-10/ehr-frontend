@@ -1,4 +1,5 @@
 import {
+  useEffect,
   useState,
   type ChangeEvent,
 } from 'react';
@@ -8,6 +9,7 @@ import {
   Avatar,
   Box,
   CircularProgress,
+  IconButton,
   Paper,
   Stack,
   Table,
@@ -17,16 +19,40 @@ import {
   TableHead,
   TablePagination,
   TableRow,
+  Tooltip,
   Typography,
 } from '@mui/material';
 
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 import PeopleIcon from '@mui/icons-material/People';
+
+import SearchInput from '../../../../component/search-input/SearchInput';
+
+import PatientFilter from './PatientFilter';
 
 import { usePatients } from '../../hooks/usePatients';
 
 import type {
   Patient,
+  PatientGender,
 } from '../../types/patient';
+
+interface PatientListProps {
+  onEdit?: (
+    patient: Patient,
+  ) => void;
+
+  onDelete?: (
+    patient: Patient,
+  ) => void;
+
+  filterOpen?: boolean;
+}
+
+type SortDirection =
+  | 'asc'
+  | 'desc';
 
 function getInitials(
   fullName: string,
@@ -37,15 +63,27 @@ function getInitials(
     .slice(0, 2)
     .map(
       (name) =>
-        name.charAt(0).toUpperCase(),
+        name
+          .charAt(0)
+          .toUpperCase(),
     )
     .join('');
 }
 
 function PatientRow({
   patient,
+  onEdit,
+  onDelete,
 }: {
   patient: Patient;
+
+  onEdit?: (
+    patient: Patient,
+  ) => void;
+
+  onDelete?: (
+    patient: Patient,
+  ) => void;
 }) {
   return (
     <TableRow hover>
@@ -109,46 +147,186 @@ function PatientRow({
       <TableCell>
         {patient.email}
       </TableCell>
+
+      {/* Actions */}
+
+      <TableCell>
+        <Stack
+          direction="row"
+          spacing={0.5}
+        >
+          <Tooltip title="Edit patient">
+            <IconButton
+              size="small"
+              aria-label={`Edit ${patient.fullName}`}
+              onClick={() =>
+                onEdit?.(patient)
+              }
+            >
+              <EditIcon fontSize="small" />
+            </IconButton>
+          </Tooltip>
+
+          <Tooltip title="Delete patient">
+            <IconButton
+              size="small"
+              color="error"
+              aria-label={`Delete ${patient.fullName}`}
+              onClick={() =>
+                onDelete?.(patient)
+              }
+            >
+              <DeleteIcon fontSize="small" />
+            </IconButton>
+          </Tooltip>
+        </Stack>
+      </TableCell>
     </TableRow>
   );
 }
 
-export default function PatientList() {
+export default function PatientList({
+  onEdit,
+  onDelete,
+  filterOpen = false,
+}: PatientListProps) {
+  /*
+   * ============================
+   * Pagination
+   * ============================
+   */
+
   const [page, setPage] =
     useState(0);
 
   const [pageSize, setPageSize] =
     useState(10);
 
+  /*
+   * ============================
+   * Search
+   * ============================
+   */
+
+  const [searchInput, setSearchInput] =
+    useState('');
+
+  const [search, setSearch] =
+    useState('');
+
+  /*
+   * ============================
+   * Pending Filter Values
+   * ============================
+   *
+   * These values belong to the
+   * filter form.
+   *
+   * They are NOT sent to the API
+   * until Apply Filter is clicked.
+   */
+
+  const [filterGender, setFilterGender] =
+    useState<
+      PatientGender | undefined
+    >();
+
+  const [filterAge, setFilterAge] =
+    useState<number | undefined>();
+
+  const [filterSortBy, setFilterSortBy] =
+    useState('fullName');
+
+  const [
+    filterSortDirection,
+    setFilterSortDirection,
+  ] =
+    useState<SortDirection>('asc');
+
+  /*
+   * ============================
+   * Applied Filter Values
+   * ============================
+   *
+   * IMPORTANT:
+   *
+   * These start as undefined.
+   *
+   * Therefore the first API request
+   * contains only:
+   *
+   * page
+   * size
+   */
+
+  const [gender, setGender] =
+    useState<
+      PatientGender | undefined
+    >();
+
+  const [age, setAge] =
+    useState<number | undefined>();
+
+  const [sort, setSort] =
+    useState<
+      string | undefined
+    >();
+
+  /*
+   * ============================
+   * Search Debounce
+   * ============================
+   */
+
+  useEffect(() => {
+    const timer =
+      window.setTimeout(() => {
+        const trimmedSearch =
+          searchInput.trim();
+
+        setSearch(
+          trimmedSearch,
+        );
+
+        setPage(0);
+      }, 400);
+
+    return () => {
+      window.clearTimeout(timer);
+    };
+  }, [searchInput]);
+
+  /*
+   * ============================
+   * API
+   * ============================
+   */
+
   const {
     data,
     isLoading,
+    isFetching,
     isError,
     error,
     refetch,
   } = usePatients({
     page,
     size: pageSize,
+
+    search:
+      search || undefined,
+
+    gender,
+
+    age,
+
+    sort,
   });
 
   /*
-   * Backend response:
-   *
-   * {
-   *   code: "OK",
-   *   data: {
-   *     content: Patient[],
-   *     empty: false,
-   *     first: true,
-   *     last: true,
-   *     number: 0,
-   *     numberOfElements: 6,
-   *     size: 20,
-   *     totalElements: 6,
-   *     totalPages: 1
-   *   },
-   *   message: "Patient list fetched successfully"
-   * }
+   * ============================
+   * API Data
+   * ============================
    */
 
   const patients =
@@ -156,6 +334,111 @@ export default function PatientList() {
 
   const totalPatients =
     data?.data?.totalElements ?? 0;
+
+  /*
+   * ============================
+   * Apply Filter
+   * ============================
+   */
+
+  const handleApplyFilter = () => {
+    /*
+     * Apply Gender.
+     */
+
+    setGender(
+      filterGender,
+    );
+
+    /*
+     * Apply Age.
+     */
+
+    setAge(
+      filterAge,
+    );
+
+    /*
+     * Apply Sort.
+     *
+     * Example:
+     *
+     * age + desc
+     *
+     * becomes:
+     *
+     * "age,desc"
+     */
+
+    setSort(
+      `${filterSortBy},${filterSortDirection}`,
+    );
+
+    /*
+     * Always go back to
+     * first page.
+     */
+
+    setPage(0);
+  };
+
+  /*
+   * ============================
+   * Clear Filter
+   * ============================
+   */
+
+  const handleClearFilters = () => {
+    /*
+     * Clear filter form.
+     */
+
+    setFilterGender(undefined);
+
+    setFilterAge(undefined);
+
+    setFilterSortBy(
+      'fullName',
+    );
+
+    setFilterSortDirection(
+      'asc',
+    );
+
+    /*
+     * Clear applied filters.
+     */
+
+    setGender(undefined);
+
+    setAge(undefined);
+
+    setSort(undefined);
+
+    /*
+     * First page.
+     */
+
+    setPage(0);
+  };
+
+  /*
+   * ============================
+   * Search
+   * ============================
+   */
+
+  const handleSearchChange = (
+    value: string,
+  ) => {
+    setSearchInput(value);
+  };
+
+  /*
+   * ============================
+   * Pagination
+   * ============================
+   */
 
   const handlePageChange = (
     _event: unknown,
@@ -166,18 +449,26 @@ export default function PatientList() {
 
   const handlePageSizeChange = (
     event: ChangeEvent<
-      HTMLTextAreaElement | HTMLInputElement
+      HTMLTextAreaElement |
+      HTMLInputElement
     >,
   ) => {
+    const nextPageSize =
+      Number(
+        event.target.value,
+      );
+
     setPageSize(
-      Number(event.target.value),
+      nextPageSize,
     );
 
     setPage(0);
   };
 
   /*
-   * Loading
+   * ============================
+   * Initial Loading
+   * ============================
    */
 
   if (isLoading) {
@@ -195,7 +486,9 @@ export default function PatientList() {
   }
 
   /*
+   * ============================
    * Error
+   * ============================
    */
 
   if (isError) {
@@ -206,10 +499,13 @@ export default function PatientList() {
           <Box
             component="button"
             type="button"
-            onClick={() => refetch()}
+            onClick={() =>
+              refetch()
+            }
             sx={{
               border: 0,
-              background: 'transparent',
+              background:
+                'transparent',
               color: 'inherit',
               cursor: 'pointer',
               fontWeight: 600,
@@ -226,122 +522,231 @@ export default function PatientList() {
     );
   }
 
-  /*
-   * Empty state
-   */
+  return (
+    <Stack spacing={2}>
+      {/* ============================
+          Search
+          ============================ */}
 
-  if (patients.length === 0) {
-    return (
       <Paper
         sx={{
-          py: 8,
-          px: 3,
-          textAlign: 'center',
+          p: 2,
         }}
       >
-        <PeopleIcon
+        <Box
           sx={{
-            fontSize: 48,
-            color: 'text.disabled',
-            mb: 1,
-          }}
-        />
-
-        <Typography
-          variant="h6"
-          sx={{
-            mb: 0.5,
+            width: {
+              xs: '100%',
+              sm: 360,
+            },
           }}
         >
-          No patients found
-        </Typography>
-
-        <Typography
-          variant="body2"
-          color="text.secondary"
-        >
-          Registered patients will
-          appear here.
-        </Typography>
+          <SearchInput
+            value={searchInput}
+            onChange={
+              handleSearchChange
+            }
+            placeholder="Search patients..."
+          />
+        </Box>
       </Paper>
-    );
-  }
 
-  /*
-   * Patient table
-   */
+      {/* ============================
+          Filter
+          ============================ */}
 
-  return (
-    <TableContainer
-      component={Paper}
-      sx={{
-        overflowX: 'auto',
-      }}
-    >
-      <Table
-        sx={{
-          minWidth: 850,
-        }}
-        aria-label="Patient management table"
-      >
-        <TableHead>
-          <TableRow>
-            <TableCell>
-              Patient
-            </TableCell>
+      {filterOpen && (
+        <PatientFilter
+          gender={
+            filterGender
+          }
+          age={
+            filterAge
+          }
+          sortBy={
+            filterSortBy
+          }
+          sortDirection={
+            filterSortDirection
+          }
+          onGenderChange={
+            setFilterGender
+          }
+          onAgeChange={
+            setFilterAge
+          }
+          onSortByChange={
+            setFilterSortBy
+          }
+          onSortDirectionChange={
+            setFilterSortDirection
+          }
+          onClear={
+            handleClearFilters
+          }
+          onApply={
+            handleApplyFilter
+          }
+        />
+      )}
 
-            <TableCell>
-              Age
-            </TableCell>
+      {/* ============================
+          Fetching
+          ============================ */}
 
-            <TableCell>
-              Gender
-            </TableCell>
+      {isFetching && (
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 1,
+            px: 1,
+          }}
+        >
+          <CircularProgress
+            size={16}
+          />
 
-            <TableCell>
-              Phone Number
-            </TableCell>
+          <Typography
+            variant="body2"
+            color="text.secondary"
+          >
+            Updating patients...
+          </Typography>
+        </Box>
+      )}
 
-            <TableCell>
-              Email
-            </TableCell>
-          </TableRow>
-        </TableHead>
+      {/* ============================
+          Empty State
+          ============================ */}
 
-        <TableBody>
-          {patients.map(
-            (
-              patient: Patient,
-              index: number,
-            ) => (
-              <PatientRow
-                key={`${patient.email}-${patient.phoneNumber}-${index}`}
-                patient={patient}
-              />
-            ),
-          )}
-        </TableBody>
-      </Table>
+      {patients.length === 0 ? (
+        <Paper
+          sx={{
+            py: 8,
+            px: 3,
+            textAlign: 'center',
+          }}
+        >
+          <PeopleIcon
+            sx={{
+              fontSize: 48,
+              color: 'text.disabled',
+              mb: 1,
+            }}
+          />
 
-      <TablePagination
-        component="div"
-        count={totalPatients}
-        page={page}
-        rowsPerPage={pageSize}
-        onPageChange={
-          handlePageChange
-        }
-        onRowsPerPageChange={
-          handlePageSizeChange
-        }
-        rowsPerPageOptions={[
-          10,
-          20,
-          50,
-          100,
-        ]}
-        labelRowsPerPage="Show"
-      />
-    </TableContainer>
+          <Typography
+            variant="h6"
+            sx={{
+              mb: 0.5,
+            }}
+          >
+            No patients found
+          </Typography>
+
+          <Typography
+            variant="body2"
+            color="text.secondary"
+          >
+            Try changing your search
+            or filters.
+          </Typography>
+        </Paper>
+      ) : (
+        <TableContainer
+          component={Paper}
+          sx={{
+            overflowX: 'auto',
+          }}
+        >
+          <Table
+            sx={{
+              minWidth: 1000,
+            }}
+            aria-label="Patient management table"
+          >
+            <TableHead>
+              <TableRow>
+                <TableCell>
+                  Patient
+                </TableCell>
+
+                <TableCell>
+                  Age
+                </TableCell>
+
+                <TableCell>
+                  Gender
+                </TableCell>
+
+                <TableCell>
+                  Phone Number
+                </TableCell>
+
+                <TableCell>
+                  Email
+                </TableCell>
+
+                <TableCell>
+                  Actions
+                </TableCell>
+              </TableRow>
+            </TableHead>
+
+            <TableBody>
+              {patients.map(
+                (
+                  patient: Patient,
+                ) => (
+                  <PatientRow
+                    key={
+                      patient.uuid
+                    }
+                    patient={
+                      patient
+                    }
+                    onEdit={
+                      onEdit
+                    }
+                    onDelete={
+                      onDelete
+                    }
+                  />
+                ),
+              )}
+            </TableBody>
+          </Table>
+
+          {/* ============================
+              Pagination
+              ============================ */}
+
+          <TablePagination
+            component="div"
+            count={
+              totalPatients
+            }
+            page={page}
+            rowsPerPage={
+              pageSize
+            }
+            onPageChange={
+              handlePageChange
+            }
+            onRowsPerPageChange={
+              handlePageSizeChange
+            }
+            rowsPerPageOptions={[
+              10,
+              20,
+              50,
+              100,
+            ]}
+            labelRowsPerPage="Show"
+          />
+        </TableContainer>
+      )}
+    </Stack>
   );
 }

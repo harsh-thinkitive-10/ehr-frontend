@@ -30,6 +30,15 @@ export interface PatientListResponse {
   message: string;
 }
 
+export interface PatientListParams {
+  page?: number;
+  size?: number;
+  search?: string;
+  gender?: PatientGender;
+  age?: number;
+  sort?: string;
+}
+
 export interface RegisterPatientRequest {
   firstName: string;
   lastName: string;
