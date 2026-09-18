@@ -39,3 +39,17 @@ export interface RegisterDoctorResponse {
   data: Doctor;
   message: string;
 }
+
+export interface UpdateDoctorRequest {
+  fullName: string;
+  specialization: string;
+  phoneNumber: string;
+  email: string;
+  consultationFee: number;
+}
+
+export interface UpdateDoctorResponse {
+  code: string;
+  data: Doctor;
+  message: string;
+}

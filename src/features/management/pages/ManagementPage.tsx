@@ -23,27 +23,25 @@ import { useRegisterDoctor } from '../../doctor/hooks/useRegisterDoctor';
 import { doctorKeys } from '../../doctor/hooks/useDoctors';
 
 import { useQueryClient } from '@tanstack/react-query';
+import { useDeleteDoctor } from '../../doctor/hooks/useDeleteDoctor';
+import type { Doctor, RegisterDoctorRequest } from '../../doctor/types/doctor';
 
-import type {
-  RegisterDoctorRequest,
-} from '../../doctor/types/doctor';
+import { useUpdateDoctor } from '../../doctor/hooks/useUpdateDoctor';
+
+import type { DoctorFormValues } from '../../doctor/schemas/doctor.schema';
 
 export default function ManagementPage() {
   const queryClient =
     useQueryClient();
 
-  const [activeTab, setActiveTab] =
-    useState(0);
-
-  const [addDoctorOpen, setAddDoctorOpen] =
-    useState(false);
-
-  const [errorMessage, setErrorMessage] =
-    useState<string | null>(null);
-
-  const registerDoctor =
-    useRegisterDoctor();
-
+  const [activeTab, setActiveTab] = useState(0);
+  const [addDoctorOpen, setAddDoctorOpen] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const registerDoctor = useRegisterDoctor();
+  const [deleteDoctor, setDeleteDoctor] = useState<Doctor | null>(null);
+  const deleteDoctorMutation = useDeleteDoctor();
+  const updateDoctor = useUpdateDoctor();
+  const [editDoctor, setEditDoctor] = useState<Doctor | null>(null);
   const handleRegisterDoctor =
     async (
       values: RegisterDoctorRequest,
@@ -69,11 +67,53 @@ export default function ManagementPage() {
       }
     };
 
+  const handleDeleteDoctor = async () => {
+    if (!deleteDoctor) return;
+
+    try {
+      await deleteDoctorMutation.mutateAsync(deleteDoctor.uuid);
+      await queryClient.invalidateQueries({ queryKey: doctorKeys.all });
+      setDeleteDoctor(null);
+    } catch (error) {
+      setErrorMessage(error instanceof Error ? error.message : 'Failed to delete doctor.');
+    }
+  };
+
   const handleTabChange = (
     _event: React.SyntheticEvent,
     newValue: number,
   ) => {
     setActiveTab(newValue);
+  };
+  const handleUpdateDoctor = async (values: DoctorFormValues) => {
+    if (!editDoctor) return;
+
+    try {
+      setErrorMessage(null);
+
+      await updateDoctor.mutateAsync({
+        uuid: editDoctor.uuid,
+        data: {
+          fullName: `${values.firstName} ${values.lastName}`.trim(),
+          specialization: values.specialization,
+          phoneNumber: values.phoneNumber,
+          email: values.email,
+          consultationFee: values.consultationFee,
+        },
+      });
+
+      await queryClient.invalidateQueries({
+        queryKey: doctorKeys.all,
+      });
+
+      setEditDoctor(null);
+    } catch (error) {
+      setErrorMessage(
+        error instanceof Error
+          ? error.message
+          : 'Failed to update doctor.',
+      );
+    }
   };
 
   return (
@@ -213,7 +253,7 @@ export default function ManagementPage() {
 
           {/* Doctor list */}
 
-          <DoctorList />
+          <DoctorList onEdit={setEditDoctor} onDelete={setDeleteDoctor} />
         </Box>
       )}
 
@@ -288,18 +328,64 @@ export default function ManagementPage() {
 
         <DialogContent dividers>
           <DoctorForm
-            loading={
-              registerDoctor.isPending
-            }
-            errorMessage={
-              errorMessage
-            }
-            onSubmit={
-              handleRegisterDoctor
-            }
+            loading={registerDoctor.isPending}
+            errorMessage={errorMessage}
+            onCancel={() => setAddDoctorOpen(false)}
+            onSubmit={handleRegisterDoctor}
           />
         </DialogContent>
       </Dialog>
+
+      <Dialog open={!!editDoctor} onClose={() => !updateDoctor.isPending && setEditDoctor(null)} fullWidth maxWidth="md">
+        <Box sx={{ px: 3.5, py: 2.5, borderBottom: 1, borderColor: 'divider' }}>
+          <Stack direction="row" sx={{ alignItems: 'center', justifyContent: 'space-between' }}>
+            <Stack direction="row" spacing={2} sx={{ alignItems: 'center' }}>
+              <Box sx={{ width: 56, height: 56, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', bgcolor: 'primary.50', color: 'primary.main' }}>
+                <MedicalServicesOutlinedIcon sx={{ fontSize: 30 }} />
+              </Box>
+              <Box>
+                <Typography variant="h5" sx={{ fontWeight: 700 }}>Edit Doctor</Typography>
+                <Typography color="text.secondary">Update healthcare provider information</Typography>
+              </Box>
+            </Stack>
+            <Button onClick={() => setEditDoctor(null)} sx={{ minWidth: 40, width: 40, height: 40, p: 0, color: 'text.secondary', fontSize: 28 }}>×</Button>
+          </Stack>
+        </Box>
+
+        <DialogContent sx={{ px: 3.5, py: 3.5 }}>
+          {editDoctor && (
+            <DoctorForm
+              mode="edit"
+              initialValues={{
+                firstName: editDoctor.fullName.split(' ').slice(0, -1).join(' ') || editDoctor.fullName,
+                lastName: editDoctor.fullName.split(' ').slice(-1).join(''),
+                specialization: editDoctor.specialization,
+                phoneNumber: editDoctor.phoneNumber,
+                email: editDoctor.email,
+                consultationFee: editDoctor.consultationFee,
+              }}
+              loading={updateDoctor.isPending}
+              errorMessage={errorMessage}
+              onCancel={() => setEditDoctor(null)}
+              onSubmit={handleUpdateDoctor}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={!!deleteDoctor} onClose={() => !deleteDoctorMutation.isPending && setDeleteDoctor(null)} maxWidth="xs" fullWidth>
+        <DialogTitle>Delete Doctor</DialogTitle>
+        <DialogContent dividers>
+          <Typography>
+            Are you sure you want to delete {deleteDoctor?.fullName}?
+          </Typography>
+          <Box sx={{ display: 'flex', gap: 1, justifyContent: 'flex-end', mt: 3 }}>
+            <Button onClick={() => setDeleteDoctor(null)}>Cancel</Button>
+            <Button color="error" variant="contained" onClick={handleDeleteDoctor}>Delete</Button>
+          </Box>
+        </DialogContent>
+      </Dialog>
+
     </Box>
   );
 }

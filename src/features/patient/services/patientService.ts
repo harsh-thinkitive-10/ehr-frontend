@@ -8,6 +8,8 @@ import type {
   PatientDashboard,
 } from '../types/dashboard.types';
 
+import type { UpdatePatientRequest, UpdatePatientResponse } from '../types/patient';
+
 import type {
   PatientListParams,
   PatientListResponse,
@@ -70,30 +72,30 @@ export const patientService = {
 
             ...(params.search?.trim()
               ? {
-                  search:
-                    params.search.trim(),
-                }
+                search:
+                  params.search.trim(),
+              }
               : {}),
 
             ...(params.gender
               ? {
-                  gender:
-                    params.gender,
-                }
+                gender:
+                  params.gender,
+              }
               : {}),
 
             ...(params.age !== undefined
               ? {
-                  age:
-                    params.age,
-                }
+                age:
+                  params.age,
+              }
               : {}),
 
             ...(params.sort
               ? {
-                  sort:
-                    params.sort,
-                }
+                sort:
+                  params.sort,
+              }
               : {}),
           },
         },
@@ -112,5 +114,13 @@ export const patientService = {
       );
 
     return response.data;
+  },
+
+  async updatePatient(uuid: string, data: UpdatePatientRequest): Promise<UpdatePatientResponse> {
+    const response = await apiClient.put<UpdatePatientResponse>(`/v1/patient/${uuid}`, data);
+    return response.data;
+  },
+  async deletePatient(uuid: string): Promise<void> {
+    await apiClient.delete(`/v1/patient/${uuid}`);
   },
 };

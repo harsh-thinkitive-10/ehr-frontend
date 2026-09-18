@@ -53,3 +53,17 @@ export interface RegisterPatientResponse {
   data: Patient;
   message: string;
 }
+
+export interface UpdatePatientRequest {
+  fullName: string;
+  age: number;
+  gender: string;
+  phoneNumber: string;
+  email: string;
+}
+
+export interface UpdatePatientResponse {
+  code: string;
+  data: Patient;
+  message: string;
+}
