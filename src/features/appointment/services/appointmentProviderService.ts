@@ -2,17 +2,16 @@ import { apiClient } from '../../../services/api/apiClient';
 
 import type {
   AppointmentProvider,
+  AppointmentProviderResponse,
 } from '../types/appointmentProvider';
 
 export const appointmentProviderService = {
-  async getProviders(): Promise<
-    AppointmentProvider[]
-  > {
+  async getProviders(): Promise<AppointmentProvider[]> {
     const response =
-      await apiClient.get<
-        AppointmentProvider[]
-      >('/v1/doctor');
+      await apiClient.get<AppointmentProviderResponse>(
+        '/v1/doctor',
+      );
 
-    return response.data;
+    return response.data.data.content;
   },
 };

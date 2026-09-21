@@ -16,9 +16,14 @@ import {
   Typography,
 } from '@mui/material';
 
-import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+// import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import CloseIcon from '@mui/icons-material/Close';
 import EventAvailableIcon from '@mui/icons-material/EventAvailable';
+import dayjs from 'dayjs';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 
 import {
   Controller,
@@ -123,7 +128,7 @@ export default function BookAppointmentDialog({
 
       setSuccessMessage(
         response?.message ??
-          'Appointment created successfully.',
+        'Appointment created successfully.',
       );
 
       reset();
@@ -225,366 +230,342 @@ export default function BookAppointmentDialog({
           py: 3,
         }}
       >
-        {successMessage ? (
-          <Stack
-            spacing={3}
-            sx={{
-              py: 5,
-              alignItems: 'center',
-            }}
-          >
-            <EventAvailableIcon
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          {successMessage ? (
+            <Stack
+              spacing={3}
               sx={{
-                fontSize: 64,
-                color: 'success.main',
-              }}
-            />
-
-            <Typography
-              variant="h6"
-              sx={{
-                fontWeight: 600,
-                textAlign: 'center',
+                py: 5,
+                alignItems: 'center',
               }}
             >
-              Appointment booked
-              successfully
-            </Typography>
+              <EventAvailableIcon
+                sx={{
+                  fontSize: 64,
+                  color: 'success.main',
+                }}
+              />
 
-            
-          </Stack>
-        ) : isLoading ? (
-          <Box
-            sx={{
-              minHeight: 300,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            <CircularProgress />
-          </Box>
-        ) : (
-          <Stack spacing={2.5}>
-            {providersError && (
-              <Alert severity="error">
-                Failed to load providers.
-              </Alert>
-            )}
+              <Typography
+                variant="h6"
+                sx={{
+                  fontWeight: 600,
+                  textAlign: 'center',
+                }}
+              >
+                Appointment booked
+                successfully
+              </Typography>
 
-            {patientsError && (
-              <Alert severity="error">
-                Failed to load patients.
-              </Alert>
-            )}
 
-            {bookAppointment.isError && (
-              <Alert severity="error">
-                Failed to book appointment.
-                Please try again.
-              </Alert>
-            )}
+            </Stack>
+          ) : isLoading ? (
+            <Box
+              sx={{
+                minHeight: 300,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <CircularProgress />
+            </Box>
+          ) : (
+            <Stack spacing={2.5}>
+              {providersError && (
+                <Alert severity="error">
+                  Failed to load providers.
+                </Alert>
+              )}
 
-            {/* Provider */}
+              {patientsError && (
+                <Alert severity="error">
+                  Failed to load patients.
+                </Alert>
+              )}
 
-            <Controller
-              name="providerId"
-              control={control}
-              render={({
-                field,
-                fieldState,
-              }) => {
-                const selectedProvider =
-                  providers.find(
-                    (
-                      provider: AppointmentProvider,
-                    ) =>
-                      provider.uuid ===
-                      field.value,
-                  ) ?? null;
+              {bookAppointment.isError && (
+                <Alert severity="error">
+                  Failed to book appointment.
+                  Please try again.
+                </Alert>
+              )}
 
-                return (
-                  <Autocomplete
-                    options={providers}
-                    value={selectedProvider}
-                    onChange={(
-                      _,
-                      value,
-                    ) => {
-                      field.onChange(
-                        value?.uuid ?? '',
-                      );
-                    }}
-                    isOptionEqualToValue={(
-                      option,
-                      value,
-                    ) =>
-                      option.uuid ===
-                      value.uuid
-                    }
-                    getOptionLabel={(
-                      option,
-                    ) =>
-                      `${option.fullName} — ${option.specialization}`
-                    }
-                    renderOption={(
-                      props,
-                      option,
-                    ) => (
-                      <Box
-                        component="li"
-                        {...props}
-                        key={option.uuid}
-                      >
-                        <Stack spacing={0.25}>
-                          <Typography
-                            variant="body2"
-                            sx={{
-                              fontWeight: 600,
-                            }}
-                          >
-                            {
-                              option.fullName
-                            }
-                          </Typography>
+              {/* Provider */}
 
-                          <Typography
-                            variant="caption"
-                            color="text.secondary"
-                          >
-                            {
-                              option.specialization
-                            }{' '}
+              <Controller
+                name="providerId"
+                control={control}
+                render={({
+                  field,
+                  fieldState,
+                }) => {
+                  const selectedProvider =
+                    providers?.find(
+                      (
+                        provider: AppointmentProvider,
+                      ) =>
+                        provider.uuid ===
+                        field.value,
+                    ) ?? null;
+
+
+                  return (
+                    <Autocomplete
+                      options={providers}
+                      value={selectedProvider}
+                      onChange={(
+                        _,
+                        value,
+                      ) => {
+                        field.onChange(
+                          value?.uuid ?? '',
+                        );
+                      }}
+                      isOptionEqualToValue={(
+                        option,
+                        value,
+                      ) =>
+                        option.uuid ===
+                        value.uuid
+                      }
+                      getOptionLabel={(
+                        option,
+                      ) =>
+                        `${option.fullName} — ${option.specialization}`
+                      }
+                      renderOption={(
+                        props,
+                        option,
+                      ) => (
+                        <Box
+                          component="li"
+                          {...props}
+                          key={option.uuid}
+                        >
+                          <Stack spacing={0.25}>
+                            <Typography
+                              variant="body2"
+                              sx={{
+                                fontWeight: 600,
+                              }}
+                            >
+                              {
+                                option.fullName
+                              }
+                            </Typography>
+
+                            <Typography
+                              variant="caption"
+                              color="text.secondary"
+                            >
+                              {
+                                option.specialization
+                              }
+                              {/* {' '}
                             • ₹
                             {
                               option.consultationFee
-                            }
-                          </Typography>
-                        </Stack>
-                      </Box>
-                    )}
-                    renderInput={(
-                      params,
-                    ) => (
-                      <TextField
-                        {...params}
-                        label="Provider"
-                        placeholder="Select provider"
-                        error={
-                          !!fieldState.error
-                        }
-                        helperText={
-                          fieldState.error
-                            ?.message
-                        }
-                      />
-                    )}
-                  />
-                );
-              }}
-            />
-
-            {/* Patient */}
-
-            <Controller
-              name="patientId"
-              control={control}
-              render={({
-                field,
-                fieldState,
-              }) => {
-                const selectedPatient =
-                  patients.find(
-                    (
-                      patient: AppointmentPatient,
-                    ) =>
-                      patient.uuid ===
-                      field.value,
-                  ) ?? null;
-
-                return (
-                  <Autocomplete
-                    options={patients}
-                    value={selectedPatient}
-                    onChange={(
-                      _,
-                      value,
-                    ) => {
-                      field.onChange(
-                        value?.uuid ?? '',
-                      );
-                    }}
-                    isOptionEqualToValue={(
-                      option,
-                      value,
-                    ) =>
-                      option.uuid ===
-                      value.uuid
-                    }
-                    getOptionLabel={(
-                      option,
-                    ) =>
-                      option.fullName
-                    }
-                    renderOption={(
-                      props,
-                      option,
-                    ) => (
-                      <Box
-                        component="li"
-                        {...props}
-                        key={option.uuid}
-                      >
-                        <Stack spacing={0.25}>
-                          <Typography
-                            variant="body2"
-                            sx={{
-                              fontWeight: 600,
-                            }}
-                          >
-                            {
-                              option.fullName
-                            }
-                          </Typography>
-
-                          <Typography
-                            variant="caption"
-                            color="text.secondary"
-                          >
-                            Age {option.age}{' '}
-                            • {option.gender}{' '}
-                            • {option.email}
-                          </Typography>
-                        </Stack>
-                      </Box>
-                    )}
-                    renderInput={(
-                      params,
-                    ) => (
-                      <TextField
-                        {...params}
-                        label="Patient"
-                        placeholder="Select patient"
-                        error={
-                          !!fieldState.error
-                        }
-                        helperText={
-                          fieldState.error
-                            ?.message
-                        }
-                      />
-                    )}
-                  />
-                );
-              }}
-            />
-
-            {/* Date */}
-
-            <Controller
-              name="appointmentDate"
-              control={control}
-              render={({
-                field,
-                fieldState,
-              }) => (
-                <TextField
-                  {...field}
-                  fullWidth
-                  type="date"
-                  label="Appointment Date"
-                  error={
-                    !!fieldState.error
-                  }
-                  helperText={
-                    fieldState.error
-                      ?.message
-                  }
-                  slotProps={{
-                    inputLabel: {
-                      shrink: true,
-                    },
-                    input: {
-                      startAdornment: (
-                        <CalendarMonthIcon
-                          sx={{
-                            mr: 1,
-                            color:
-                              'text.secondary',
-                          }}
+                            } */}
+                            </Typography>
+                          </Stack>
+                        </Box>
+                      )}
+                      renderInput={(
+                        params,
+                      ) => (
+                        <TextField
+                          {...params}
+                          label="Provider"
+                          placeholder="Select provider"
+                          error={
+                            !!fieldState.error
+                          }
+                          helperText={
+                            fieldState.error
+                              ?.message
+                          }
                         />
-                      ),
-                    },
-                  }}
-                />
-              )}
-            />
+                      )}
+                    />
+                  );
+                }}
+              />
 
-            {/* Time */}
+              {/* Patient */}
 
-            <Controller
-              name="appointmentTime"
-              control={control}
-              render={({
-                field,
-                fieldState,
-              }) => (
-                <TextField
-                  {...field}
-                  fullWidth
-                  type="time"
-                  label="Appointment Time"
-                  error={
-                    !!fieldState.error
-                  }
-                  helperText={
-                    fieldState.error
-                      ?.message
-                  }
-                  slotProps={{
-                    inputLabel: {
-                      shrink: true,
-                    },
-                  }}
-                />
-              )}
-            />
+              <Controller
+                name="patientId"
+                control={control}
+                render={({
+                  field,
+                  fieldState,
+                }) => {
+                  const selectedPatient =
+                    patients.find(
+                      (
+                        patient: AppointmentPatient,
+                      ) =>
+                        patient.uuid ===
+                        field.value,
+                    ) ?? null;
 
-            {/* Comment */}
+                  return (
+                    <Autocomplete
+                      options={patients}
+                      value={selectedPatient}
+                      onChange={(
+                        _,
+                        value,
+                      ) => {
+                        field.onChange(
+                          value?.uuid ?? '',
+                        );
+                      }}
+                      isOptionEqualToValue={(
+                        option,
+                        value,
+                      ) =>
+                        option.uuid ===
+                        value.uuid
+                      }
+                      getOptionLabel={(
+                        option,
+                      ) =>
+                        option.fullName
+                      }
+                      renderOption={(
+                        props,
+                        option,
+                      ) => (
+                        <Box
+                          component="li"
+                          {...props}
+                          key={option.uuid}
+                        >
+                          <Stack spacing={0.25}>
+                            <Typography
+                              variant="body2"
+                              sx={{
+                                fontWeight: 600,
+                              }}
+                            >
+                              {
+                                option.fullName
+                              }
+                            </Typography>
 
-            <Controller
-              name="comment"
-              control={control}
-              render={({
-                field,
-                fieldState,
-              }) => (
-                <TextField
-                  {...field}
-                  fullWidth
-                  multiline
-                  minRows={4}
-                  maxRows={6}
-                  label="Comment"
-                  placeholder="Add reason for visit or any additional information..."
-                  error={
-                    !!fieldState.error
-                  }
-                  helperText={
-                    fieldState.error
-                      ?.message ??
-                    `${field.value?.length ?? 0}/500`
-                  }
-                  slotProps={{
-                    htmlInput: {
-                      maxLength: 500,
-                    },
-                  }}
-                />
-              )}
-            />
-          </Stack>
-        )}
+                            <Typography
+                              variant="caption"
+                              color="text.secondary"
+                            >
+                              Age {option.age}{' '}
+                              • {option.gender}{' '}
+                              • {option.email}
+                            </Typography>
+                          </Stack>
+                        </Box>
+                      )}
+                      renderInput={(
+                        params,
+                      ) => (
+                        <TextField
+                          {...params}
+                          label="Patient"
+                          placeholder="Select patient"
+                          error={
+                            !!fieldState.error
+                          }
+                          helperText={
+                            fieldState.error
+                              ?.message
+                          }
+                        />
+                      )}
+                    />
+                  );
+                }}
+              />
+
+              {/* Date */}
+
+              <Controller
+                name="appointmentDate"
+                control={control}
+                render={({ field, fieldState }) => (
+                  <DatePicker
+                    label="Appointment Date"
+                    value={field.value ? dayjs(field.value) : null}
+                    onChange={(value) => field.onChange(value ? value.format('YYYY-MM-DD') : '')}
+                    disablePast
+                    slotProps={{
+                      textField: {
+                        fullWidth: true,
+                        error: !!fieldState.error,
+                        helperText: fieldState.error?.message,
+                      },
+                    }}
+                  />
+                )}
+              />
+
+              <Controller
+                name="appointmentTime"
+                control={control}
+                render={({ field, fieldState }) => (
+                  <TimePicker
+                    label="Appointment Time"
+                    ampm={false}
+                    value={field.value ? dayjs(`2000-01-01T${field.value}`) : null}
+                    onChange={(value) => field.onChange(value ? value.format('HH:mm') : '')}
+                    slotProps={{
+                      textField: {
+                        fullWidth: true,
+                        error: !!fieldState.error,
+                        helperText: fieldState.error?.message,
+                      },
+                    }}
+                  />
+                )}
+              />
+
+
+              {/* Comment */}
+
+              <Controller
+                name="comment"
+                control={control}
+                render={({
+                  field,
+                  fieldState,
+                }) => (
+                  <TextField
+                    {...field}
+                    fullWidth
+                    multiline
+                    minRows={4}
+                    maxRows={6}
+                    label="Comment"
+                    placeholder="Add reason for visit or any additional information..."
+                    error={
+                      !!fieldState.error
+                    }
+                    helperText={
+                      fieldState.error
+                        ?.message ??
+                      `${field.value?.length ?? 0}/500`
+                    }
+                    slotProps={{
+                      htmlInput: {
+                        maxLength: 500,
+                      },
+                    }}
+                  />
+                )}
+              />
+            </Stack>
+          )}
+        </LocalizationProvider>
       </DialogContent>
 
       <Divider />

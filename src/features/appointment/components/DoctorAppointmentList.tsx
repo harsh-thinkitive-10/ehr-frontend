@@ -33,7 +33,9 @@ import { useDoctorAppointments } from '../hooks/useDoctorAppointments';
 import type {
   DoctorAppointment,
 } from '../types/doctorAppointment';
-import type { AppointmentStatus } from '../types/appointment.types';
+import type {
+  AppointmentStatus,
+} from '../types/appointment';
 
 type AppointmentFilter =
   | 'ALL'

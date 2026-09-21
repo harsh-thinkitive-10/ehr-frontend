@@ -19,6 +19,7 @@ import DashboardPage from '../features/dashboard/pages/DashboardPage';
  * Patient
  */
 import PatientProfilePage from '../features/patient/pages/PatientProfilePage';
+import PatientManagementPage from '../features/patient/pages/PatientManagementPage';
 
 /*
  * Doctor
@@ -36,6 +37,7 @@ import DoctorAppointmentListPage from '../features/appointment/pages/DoctorAppoi
  */
 import AdminDashboardPage from '../features/admin/pages/AdminDashboardPage';
 import AdminAppointmentListPage from '../features/admin/pages/AdminAppointmentListPage';
+import ManagementPage from '../features/management/pages/ManagementPage';
 
 /*
  * Settings
@@ -179,6 +181,36 @@ export const router = createBrowserRouter([
 
           /*
            * -------------------------------------------------
+           * Patient Management
+           * -------------------------------------------------
+           *
+           * Admin can:
+           * - Register patients
+           * - View patients
+           * - Search patients
+           * - Filter patients
+           * - Update patients
+           * - Delete patients
+           * - Paginate patients
+           */
+          {
+            element: (
+              <RoleRoute
+                allowedRoles={[
+                  ROLES.ADMIN,
+                ]}
+              />
+            ),
+            children: [
+              {
+                path: '/admin/patients',
+                element: <PatientManagementPage />,
+              },
+            ],
+          },
+
+          /*
+           * -------------------------------------------------
            * Doctor Profile
            * -------------------------------------------------
            */
@@ -279,6 +311,21 @@ export const router = createBrowserRouter([
               {
                 path: '/admin/dashboard',
                 element: <AdminDashboardPage />,
+              },
+            ],
+          },
+          {
+            element: (
+              <RoleRoute
+                allowedRoles={[
+                  ROLES.ADMIN,
+                ]}
+              />
+            ),
+            children: [
+              {
+                path: '/admin/management',
+                element: <ManagementPage />,
               },
             ],
           },

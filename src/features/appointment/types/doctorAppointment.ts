@@ -1,12 +1,6 @@
-export type DoctorAppointmentStatus =
-  | 'SCHEDULED'
-  | 'COMPLETED'
-  | 'PENDING'
-  | 'CHECK_IN'
-  | 'CANCELLED'
-  | 'NO_SHOW'
-  | 'RESCHEDULED'
-  | 'CLOSED';
+import type {
+  AppointmentStatus,
+} from './appointment';
 
 export interface DoctorAppointment {
   appointmentDate: string;
@@ -16,7 +10,7 @@ export interface DoctorAppointment {
   patientGender: string;
   patientPhoneNumber: string;
   reasonForVisit: string;
-  status: DoctorAppointmentStatus;
+  status: AppointmentStatus;
 }
 
 export interface DoctorAppointmentPage {

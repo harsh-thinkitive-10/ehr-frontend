@@ -6,3 +6,21 @@ export interface AppointmentProvider {
   email: string;
   consultationFee: number;
 }
+
+export interface AppointmentProviderPage {
+  content: AppointmentProvider[];
+  empty: boolean;
+  first: boolean;
+  last: boolean;
+  number: number;
+  numberOfElements: number;
+  size: number;
+  totalElements: number;
+  totalPages: number;
+}
+
+export interface AppointmentProviderResponse {
+  code: string;
+  data: AppointmentProviderPage;
+  message: string;
+}
