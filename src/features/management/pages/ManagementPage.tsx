@@ -122,25 +122,6 @@ export default function ManagementPage() {
           PAGE HEADER
           ===================================================== */}
 
-      {/* <Stack
-        spacing={0.5}
-        sx={{
-          mb: 2,
-        }}
-      >
-        <Typography variant="h5">
-          Management
-        </Typography>
-
-        <Typography
-          variant="body2"
-          color="text.secondary"
-        >
-          Manage providers, locations and
-          other master data
-        </Typography>
-      </Stack> */}
-
       {/* =====================================================
           MANAGEMENT TABS
           ===================================================== */}
