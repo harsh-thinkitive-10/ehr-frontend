@@ -14,6 +14,7 @@ export const bookAppointmentSchema = z.object({
       1,
       'Please select a patient',
     ),
+  locationId: z.string().min(1, 'Location is required'),
 
   appointmentDate: z
     .string()

@@ -13,25 +13,29 @@ import { useRegisterPatient } from '../hooks/useRegisterPatient';
 import { useDeletePatient } from '../hooks/useDeletePatient';
 import { patientKeys } from '../hooks/usePatients';
 import type { Patient, RegisterPatientRequest } from '../types/patient';
+import AppSnackbar from '../../../component/feedback/AppSnackbar';
+import { useSnackbar } from '../../../component/hooks/useSnackbar';
 
 export default function PatientManagementPage() {
   const queryClient = useQueryClient();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [filterOpen, setFilterOpen] = useState(false);
   const [deletePatient, setDeletePatient] = useState<Patient | null>(null);
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const registerPatient = useRegisterPatient();
   const deletePatientMutation = useDeletePatient();
+
+  const { snackbar, showSuccess, showError, closeSnackbar } = useSnackbar();
 
   const handleRegister = async (values: RegisterPatientRequest) => {
     try {
       const response = await registerPatient.mutateAsync(values);
       await queryClient.invalidateQueries({ queryKey: patientKeys.all });
       setDialogOpen(false);
-      setSuccessMessage(response.message ?? 'Patient registered successfully.');
+      showSuccess(response.message || 'Patient registered successfully');
     } catch (error) {
+      showError(error instanceof Error ? error.message : 'Failed to register patient.');
       setErrorMessage(error instanceof Error ? error.message : 'Failed to register patient.');
     }
   };
@@ -43,7 +47,7 @@ export default function PatientManagementPage() {
       await deletePatientMutation.mutateAsync(deletePatient.uuid);
       await queryClient.invalidateQueries({ queryKey: patientKeys.all });
       setDeletePatient(null);
-      setSuccessMessage('Patient deleted successfully.');
+      showSuccess('Patient deleted successfully');
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : 'Failed to delete patient.');
     }
@@ -122,11 +126,12 @@ export default function PatientManagementPage() {
         </DialogContent>
       </Dialog>
 
-      <Snackbar open={!!successMessage} autoHideDuration={4000} onClose={() => setSuccessMessage(null)}>
-        <Alert severity="success" variant="filled" onClose={() => setSuccessMessage(null)}>
-          {successMessage}
-        </Alert>
-      </Snackbar>
+      <AppSnackbar
+        open={snackbar.open}
+        message={snackbar.message}
+        severity={snackbar.severity}
+        onClose={() => closeSnackbar()}
+      />
 
       <Snackbar open={!!errorMessage} autoHideDuration={5000} onClose={() => setErrorMessage(null)}>
         <Alert severity="error" variant="filled" onClose={() => setErrorMessage(null)}>

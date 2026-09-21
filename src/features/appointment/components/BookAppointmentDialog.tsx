@@ -43,6 +43,8 @@ import { useBookAppointment } from '../hooks/useBookAppointment';
 
 import type { AppointmentProvider } from '../types/appointmentProvider';
 import type { AppointmentPatient } from '../types/appointmentPatient';
+import type { Location } from '../../location/types/location';
+import { useAppointmentLocations } from '../hooks/useAppointmentLocations';
 
 interface BookAppointmentDialogProps {
   open: boolean;
@@ -70,6 +72,7 @@ export default function BookAppointmentDialog({
       appointmentDate: '',
       appointmentTime: '',
       comment: '',
+      locationId: '',
     },
   });
 
@@ -85,11 +88,17 @@ export default function BookAppointmentDialog({
     isError: patientsError,
   } = useAppointmentPatients();
 
+  const {
+    data: locations = [],
+    isLoading: locationsLoading,
+    isError: locationsError,
+  } = useAppointmentLocations();
+
   const bookAppointment =
     useBookAppointment();
 
   const isLoading =
-    providersLoading || patientsLoading;
+    providersLoading || patientsLoading || locationsLoading;
 
   const isSubmitting =
     bookAppointment.isPending;
@@ -124,6 +133,7 @@ export default function BookAppointmentDialog({
           status: 'SCHEDULED',
           patientUuid: data.patientId,
           doctorUuid: data.providerId,
+          locationUuid: data.locationId,
         });
 
       setSuccessMessage(
@@ -288,6 +298,12 @@ export default function BookAppointmentDialog({
                 <Alert severity="error">
                   Failed to book appointment.
                   Please try again.
+                </Alert>
+              )}
+
+              {locationsError && (
+                <Alert severity="error">
+                  Failed to load locations.
                 </Alert>
               )}
 
@@ -480,6 +496,49 @@ export default function BookAppointmentDialog({
                             fieldState.error
                               ?.message
                           }
+                        />
+                      )}
+                    />
+                  );
+                }}
+              />
+
+              {/* Location */}
+              {/* Location */}
+
+              <Controller
+                name="locationId"
+                control={control}
+                render={({ field, fieldState }) => {
+                  const selectedLocation =
+                    locations.find((location: Location) => location.uuid === field.value) ?? null;
+
+                  return (
+                    <Autocomplete
+                      options={locations}
+                      value={selectedLocation}
+                      onChange={(_, value) => field.onChange(value?.uuid ?? '')}
+                      isOptionEqualToValue={(option, value) => option.uuid === value.uuid}
+                      getOptionLabel={(option) => `${option.name} — ${option.code}`}
+                      renderOption={(props, option) => (
+                        <Box component="li" {...props} key={option.uuid}>
+                          <Stack spacing={0.25}>
+                            <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                              {option.name}
+                            </Typography>
+                            <Typography variant="caption" color="text.secondary">
+                              {option.code} • {option.billingAddress.city}, {option.billingAddress.state}
+                            </Typography>
+                          </Stack>
+                        </Box>
+                      )}
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          label="Location"
+                          placeholder="Select location"
+                          error={!!fieldState.error}
+                          helperText={fieldState.error?.message}
                         />
                       )}
                     />

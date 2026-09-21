@@ -139,6 +139,7 @@ export default function DoctorList({ onEdit, onDelete }: DoctorListProps) {
                 <TableCell>Email</TableCell>
                 <TableCell>Phone Number</TableCell>
                 <TableCell>Consultation Fee</TableCell>
+                <TableCell>Status</TableCell>
                 <TableCell align="right">Actions</TableCell>
               </TableRow>
             </TableHead>
@@ -158,6 +159,7 @@ export default function DoctorList({ onEdit, onDelete }: DoctorListProps) {
                   <TableCell>{doctor.email}</TableCell>
                   <TableCell>{doctor.phoneNumber}</TableCell>
                   <TableCell>₹{doctor.consultationFee.toFixed(2)}</TableCell>
+                  <TableCell>{doctor.isActive ? 'Active' : 'Inactive'}</TableCell>
                   <TableCell align="right">
                     <Stack direction="row" spacing={0.5} sx={{ justifyContent: 'flex-end' }}>
                       <Tooltip title="Edit doctor">

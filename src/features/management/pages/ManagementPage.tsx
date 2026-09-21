@@ -285,7 +285,7 @@ export default function ManagementPage() {
             loading={registerDoctor.isPending}
             errorMessage={errorMessage}
             onCancel={() => setAddDoctorOpen(false)}
-            onSubmit={handleRegisterDoctor}
+            onSubmit={handleRegisterDoctor} 
           />
         </DialogContent>
       </Dialog>

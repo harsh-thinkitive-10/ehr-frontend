@@ -5,6 +5,7 @@ export interface Doctor {
   phoneNumber: string;
   email: string;
   consultationFee: number;
+  isActive: boolean;
 }
 
 export interface DoctorPage {

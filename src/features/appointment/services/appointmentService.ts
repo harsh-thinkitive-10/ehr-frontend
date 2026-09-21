@@ -6,6 +6,7 @@ import type { AppointmentProvider, AppointmentProviderResponse } from '../types/
 import type { DoctorAppointmentPage, DoctorAppointmentResponse } from '../types/doctorAppointment';
 import type { BookAppointmentRequest } from '../types/bookAppointment';
 import type { AppointmentPatient } from '../types/appointmentPatient';
+import type { AppointmentStatus } from '../types/appointment';
 
 interface ApiResponse<T> {
   code: string;
@@ -55,6 +56,14 @@ export const appointmentService = {
 
   async bookAppointment(data: BookAppointmentRequest) {
     const response = await apiClient.post('/v1/appointment', data);
+    return response.data;
+  },
+  async updateAppointmentStatus(uuid: string, status: AppointmentStatus) {
+    const response = await apiClient.patch<ApiResponse<null>>(
+      `/v1/appointment/${uuid}/status`,
+      null,
+      { params: { status } },
+    );
     return response.data;
   },
 };

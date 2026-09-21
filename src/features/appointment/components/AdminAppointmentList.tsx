@@ -10,6 +10,7 @@ import AppointmentStatusChip from './AppointmentStatusChip';
 import AppointmentDateTime from './AppointmentDateTime';
 import AppointmentFilterMenu, { type AppointmentFilter } from './AppointmentFilterMenu';
 import type { AdminAppointment } from '../types/adminAppointment';
+import AppointmentDetailsDrawer from './AppointmentDetailsDrawer';
 
 const PAGE_SIZE = 10;
 
@@ -19,8 +20,9 @@ export default function AdminAppointmentList() {
   const [filter, setFilter] = useState<AppointmentFilter>('ALL');
   const [filterAnchorEl, setFilterAnchorEl] = useState<HTMLElement | null>(null);
   const [isBookAppointmentOpen, setIsBookAppointmentOpen] = useState(false);
+  const [selectedAppointment, setSelectedAppointment] = useState<AdminAppointment | null>(null);
 
-  const { data, isLoading } = useAdminAppointments({ page, size: pageSize });
+  const { data, isLoading, refetch } = useAdminAppointments({ page, size: pageSize });
 
   const appointments = data?.content ?? [];
 
@@ -150,8 +152,8 @@ export default function AdminAppointmentList() {
       id: 'actions',
       label: 'Actions',
       minWidth: 150,
-      render: () => (
-        <Button variant="outlined" size="small">
+      render: (appointment) => (
+        <Button variant="outlined" size="small" onClick={() => setSelectedAppointment(appointment)}>
           View Details
         </Button>
       ),
@@ -223,6 +225,12 @@ export default function AdminAppointmentList() {
       <BookAppointmentDialog
         open={isBookAppointmentOpen}
         onClose={() => setIsBookAppointmentOpen(false)}
+      />
+      <AppointmentDetailsDrawer
+        open={Boolean(selectedAppointment)}
+        appointment={selectedAppointment}
+        onClose={() => setSelectedAppointment(null)}
+        onUpdated={refetch}
       />
     </>
   );
