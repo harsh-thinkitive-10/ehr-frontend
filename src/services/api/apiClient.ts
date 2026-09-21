@@ -16,7 +16,7 @@ export const apiClient = axios.create({
     'Content-Type': 'application/json',
   },
   timeout: 10000,
-  withCredentials: false,
+  withCredentials: true,
 });
 
 const publicAuthEndpoints = new Set([
@@ -52,8 +52,8 @@ apiClient.interceptors.response.use(
     const originalRequest =
       error.config as
       | (InternalAxiosRequestConfig & {
-        _retry?: boolean;
-      })
+          _retry?: boolean;
+        })
       | undefined;
 
     if (
@@ -64,37 +64,28 @@ apiClient.interceptors.response.use(
       return Promise.reject(error);
     }
 
-    if (
-      originalRequest.url ===
-      '/v1/auth/refresh'
-    ) {
+    if (originalRequest.url === '/v1/auth/refresh') {
       tokenService.clearTokens();
+      tokenService.notifySessionExpired();
 
       return Promise.reject(error);
     }
 
     originalRequest._retry = true;
 
-    const currentRefreshToken =
-      tokenService.getRefreshToken();
-
-    if (!currentRefreshToken) {
-      tokenService.clearTokens();
-
-      return Promise.reject(error);
-    }
-
     try {
       if (!refreshPromise) {
         refreshPromise = authService
-          .refresh(currentRefreshToken)
+          .refresh()
           .then((response) => {
-            tokenService.setTokens(
-              response.access_token,
-              response.refresh_token,
+            const newAccessToken =
+              response.data.access_token;
+
+            tokenService.setAccessToken(
+              newAccessToken,
             );
 
-            return response.access_token;
+            return newAccessToken;
           })
           .finally(() => {
             refreshPromise = null;

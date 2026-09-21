@@ -5,19 +5,22 @@ export interface LoginRequest {
   password: string;
 }
 
-export interface LoginResponse {
+export interface AuthTokenData {
   access_token: string;
-  refresh_token: string;
-  expires_in: number;
-}
-
-
-export interface RefreshResponse {
-  success: boolean;
-  access_token: string;
-  refresh_token: string;
   expires_in: number;
   token_type: string;
+}
+
+export interface LoginResponse {
+  code: string;
+  data: AuthTokenData;
+  message: string;
+}
+
+export interface RefreshResponse {
+  code: string;
+  data: AuthTokenData;
+  message: string;
 }
 
 export interface LogoutResponse {
@@ -29,6 +32,7 @@ export interface ChangePasswordRequest {
   currentPassword: string;
   newPassword: string;
 }
+
 export interface ForgotPasswordRequest {
   username: string;
 }
@@ -57,45 +61,37 @@ export const authService = {
 
     return response.data;
   },
-  async refresh(
-    refreshToken: string,
-  ): Promise<RefreshResponse> {
-    const response =
-      await apiClient.post<RefreshResponse>(
-        '/v1/auth/refresh',
-        {
-          refreshToken,
-        },
-      );
+
+  async refresh(): Promise<RefreshResponse> {
+    const response = await apiClient.post<RefreshResponse>(
+      '/v1/auth/refresh',
+    );
 
     return response.data;
   },
 
   async logout(): Promise<LogoutResponse> {
-    const response =
-      await apiClient.post<LogoutResponse>(
-        '/v1/auth/logout',
-      );
+    const response = await apiClient.post<LogoutResponse>(
+      '/v1/auth/logout',
+    );
 
     return response.data;
   },
 
-  async changePassword(
-    data: ChangePasswordRequest,
-  ): Promise<void> {
+  async changePassword(data: ChangePasswordRequest): Promise<void> {
     await apiClient.patch(
       '/v1/auth/change-password',
       data,
     );
   },
+
   async requestPasswordReset(
     data: ForgotPasswordRequest,
   ): Promise<ForgotPasswordResponse> {
-    const response =
-      await apiClient.post<ForgotPasswordResponse>(
-        '/v1/auth/forgot-password',
-        data,
-      );
+    const response = await apiClient.post<ForgotPasswordResponse>(
+      '/v1/auth/forgot-password',
+      data,
+    );
 
     return response.data;
   },
@@ -103,11 +99,10 @@ export const authService = {
   async resetPassword(
     data: ResetPasswordRequest,
   ): Promise<ResetPasswordResponse> {
-    const response =
-      await apiClient.post<ResetPasswordResponse>(
-        '/v1/auth/reset-password',
-        data,
-      );
+    const response = await apiClient.post<ResetPasswordResponse>(
+      '/v1/auth/reset-password',
+      data,
+    );
 
     return response.data;
   },

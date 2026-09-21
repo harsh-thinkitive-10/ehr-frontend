@@ -1,91 +1,58 @@
-import {
-  createBrowserRouter,
-  Navigate,
-} from 'react-router-dom';
+import { createBrowserRouter, Navigate } from 'react-router-dom';
 
-/*
- * Auth Pages
- */
+// Auth
 import LoginPage from '../features/auth/pages/LoginPage';
 import ForgotPasswordPage from '../features/auth/pages/ForgotPasswordPage';
 import ResetPasswordPage from '../features/auth/pages/ResetPasswordPage';
 
-/*
- * Dashboard
- */
+// Dashboard
 import DashboardPage from '../features/dashboard/pages/DashboardPage';
 
-/*
- * Patient
- */
+// Patient
 import PatientProfilePage from '../features/patient/pages/PatientProfilePage';
 import PatientManagementPage from '../features/patient/pages/PatientManagementPage';
 
-/*
- * Doctor
- */
+// Doctor
 import DoctorProfilePage from '../features/doctor/pages/DoctorProfilePage';
 
-/*
- * Appointments
- */
+// Appointments
 import AppointmentListPage from '../features/appointment/pages/AppointmentListPage';
 import DoctorAppointmentListPage from '../features/appointment/pages/DoctorAppointmentListPage';
 
-/*
- * Admin
- */
+// Admin
 import AdminDashboardPage from '../features/admin/pages/AdminDashboardPage';
 import AdminAppointmentListPage from '../features/admin/pages/AdminAppointmentListPage';
 import ManagementPage from '../features/management/pages/ManagementPage';
 
-/*
- * Settings
- */
+// Settings
 import SettingsPage from '../features/setting/pages/SettingsPage';
 
-/*
- * Common Pages
- */
+// Common
 import NotFoundPage from '../pages/NotFoundPage';
 import UnauthorizedPage from '../pages/UnauthorizedPage';
 
-/*
- * Route Guards
- */
+// Guards
 import ProtectedRoute from '../routes/ProtectedRoute';
 import RoleRoute from '../routes/RoleRoute';
 
-/*
- * Layouts
- */
+// Layouts
 import AuthLayout from '../layouts/AuthLayout/AuthLayout';
 import LoginLayout from '../layouts/LoginLayout/LoginLayout';
 import AppLayout from '../layouts/AppLayout/AppLayout';
 
-/*
- * Roles
- */
+// Roles
 import { ROLES } from '../features/auth/constant/roles';
 
 export const router = createBrowserRouter([
-  /*
-   * =========================================================
-   * PUBLIC ROUTES
-   * =========================================================
-   */
+  // =========================================================
+  // PUBLIC ROUTES
+  // =========================================================
 
-  /*
-   * Root
-   */
   {
     path: '/',
     element: <Navigate to="/login" replace />,
   },
 
-  /*
-   * Authentication Routes
-   */
   {
     element: (
       <AuthLayout>
@@ -93,33 +60,19 @@ export const router = createBrowserRouter([
       </AuthLayout>
     ),
     children: [
-      {
-        path: '/login',
-        element: <LoginPage />,
-      },
-      {
-        path: '/forgot-password',
-        element: <ForgotPasswordPage />,
-      },
+      { path: '/login', element: <LoginPage /> },
+      { path: '/forgot-password', element: <ForgotPasswordPage /> },
     ],
   },
 
-  /*
-   * Password Reset
-   *
-   * Kept outside AuthLayout because the reset page
-   * has its own layout.
-   */
   {
     path: '/reset-password',
     element: <ResetPasswordPage />,
   },
 
-  /*
-   * =========================================================
-   * PROTECTED ROUTES
-   * =========================================================
-   */
+  // =========================================================
+  // PROTECTED ROUTES
+  // =========================================================
 
   {
     element: <ProtectedRoute />,
@@ -127,26 +80,14 @@ export const router = createBrowserRouter([
       {
         element: <AppLayout />,
         children: [
-          /*
-           * -------------------------------------------------
-           * Dashboard
-           * -------------------------------------------------
-           *
-           * Patient -> Patient Dashboard
-           * Doctor  -> Doctor Dashboard
-           * Admin   -> Admin Dashboard
-           *
-           * DashboardPage decides which dashboard
-           * should actually be rendered.
-           */
+          // -------------------------------------------------
+          // DASHBOARD
+          // -------------------------------------------------
+
           {
             element: (
               <RoleRoute
-                allowedRoles={[
-                  ROLES.PATIENT,
-                  ROLES.DOCTOR,
-                  ROLES.ADMIN,
-                ]}
+                allowedRoles={[ROLES.PATIENT, ROLES.DOCTOR, ROLES.ADMIN]}
               />
             ),
             children: [
@@ -157,19 +98,13 @@ export const router = createBrowserRouter([
             ],
           },
 
-          /*
-           * -------------------------------------------------
-           * Patient Profile
-           * -------------------------------------------------
-           */
+          // -------------------------------------------------
+          // PATIENT
+          // -------------------------------------------------
+
           {
             element: (
-              <RoleRoute
-                allowedRoles={[
-                  ROLES.PATIENT,
-                  ROLES.ADMIN,
-                ]}
-              />
+              <RoleRoute allowedRoles={[ROLES.PATIENT, ROLES.ADMIN]} />
             ),
             children: [
               {
@@ -179,28 +114,8 @@ export const router = createBrowserRouter([
             ],
           },
 
-          /*
-           * -------------------------------------------------
-           * Patient Management
-           * -------------------------------------------------
-           *
-           * Admin can:
-           * - Register patients
-           * - View patients
-           * - Search patients
-           * - Filter patients
-           * - Update patients
-           * - Delete patients
-           * - Paginate patients
-           */
           {
-            element: (
-              <RoleRoute
-                allowedRoles={[
-                  ROLES.ADMIN,
-                ]}
-              />
-            ),
+            element: <RoleRoute allowedRoles={[ROLES.ADMIN]} />,
             children: [
               {
                 path: '/admin/patients',
@@ -209,19 +124,13 @@ export const router = createBrowserRouter([
             ],
           },
 
-          /*
-           * -------------------------------------------------
-           * Doctor Profile
-           * -------------------------------------------------
-           */
+          // -------------------------------------------------
+          // DOCTOR
+          // -------------------------------------------------
+
           {
             element: (
-              <RoleRoute
-                allowedRoles={[
-                  ROLES.DOCTOR,
-                  ROLES.ADMIN,
-                ]}
-              />
+              <RoleRoute allowedRoles={[ROLES.DOCTOR, ROLES.ADMIN]} />
             ),
             children: [
               {
@@ -231,19 +140,12 @@ export const router = createBrowserRouter([
             ],
           },
 
-          /*
-           * -------------------------------------------------
-           * Patient Appointments
-           * -------------------------------------------------
-           */
+          // -------------------------------------------------
+          // APPOINTMENTS
+          // -------------------------------------------------
+
           {
-            element: (
-              <RoleRoute
-                allowedRoles={[
-                  ROLES.PATIENT,
-                ]}
-              />
-            ),
+            element: <RoleRoute allowedRoles={[ROLES.PATIENT]} />,
             children: [
               {
                 path: '/appointments',
@@ -252,19 +154,8 @@ export const router = createBrowserRouter([
             ],
           },
 
-          /*
-           * -------------------------------------------------
-           * Doctor Appointments
-           * -------------------------------------------------
-           */
           {
-            element: (
-              <RoleRoute
-                allowedRoles={[
-                  ROLES.DOCTOR,
-                ]}
-              />
-            ),
+            element: <RoleRoute allowedRoles={[ROLES.DOCTOR]} />,
             children: [
               {
                 path: '/doctor/appointments',
@@ -273,19 +164,8 @@ export const router = createBrowserRouter([
             ],
           },
 
-          /*
-           * -------------------------------------------------
-           * Admin Appointments
-           * -------------------------------------------------
-           */
           {
-            element: (
-              <RoleRoute
-                allowedRoles={[
-                  ROLES.ADMIN,
-                ]}
-              />
-            ),
+            element: <RoleRoute allowedRoles={[ROLES.ADMIN]} />,
             children: [
               {
                 path: '/admin/appointments',
@@ -294,19 +174,12 @@ export const router = createBrowserRouter([
             ],
           },
 
-          /*
-           * -------------------------------------------------
-           * Admin Dashboard
-           * -------------------------------------------------
-           */
+          // -------------------------------------------------
+          // ADMIN
+          // -------------------------------------------------
+
           {
-            element: (
-              <RoleRoute
-                allowedRoles={[
-                  ROLES.ADMIN,
-                ]}
-              />
-            ),
+            element: <RoleRoute allowedRoles={[ROLES.ADMIN]} />,
             children: [
               {
                 path: '/admin/dashboard',
@@ -314,14 +187,9 @@ export const router = createBrowserRouter([
               },
             ],
           },
+
           {
-            element: (
-              <RoleRoute
-                allowedRoles={[
-                  ROLES.ADMIN,
-                ]}
-              />
-            ),
+            element: <RoleRoute allowedRoles={[ROLES.ADMIN]} />,
             children: [
               {
                 path: '/admin/management',
@@ -330,22 +198,14 @@ export const router = createBrowserRouter([
             ],
           },
 
-          /*
-           * -------------------------------------------------
-           * Settings
-           * -------------------------------------------------
-           *
-           * All authenticated application roles can access
-           * settings.
-           */
+          // -------------------------------------------------
+          // SETTINGS
+          // -------------------------------------------------
+
           {
             element: (
               <RoleRoute
-                allowedRoles={[
-                  ROLES.PATIENT,
-                  ROLES.DOCTOR,
-                  ROLES.ADMIN,
-                ]}
+                allowedRoles={[ROLES.PATIENT, ROLES.DOCTOR, ROLES.ADMIN]}
               />
             ),
             children: [
@@ -360,21 +220,15 @@ export const router = createBrowserRouter([
     ],
   },
 
-  /*
-   * =========================================================
-   * UNAUTHORIZED
-   * =========================================================
-   */
+  // =========================================================
+  // COMMON ROUTES
+  // =========================================================
+
   {
     path: '/unauthorized',
     element: <UnauthorizedPage />,
   },
 
-  /*
-   * =========================================================
-   * NOT FOUND
-   * =========================================================
-   */
   {
     path: '*',
     element: <NotFoundPage />,
