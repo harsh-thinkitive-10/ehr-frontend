@@ -1,26 +1,11 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
-
 import { appointmentKeys } from '../constant/queryKeys';
+import { appointmentService, type DoctorAppointmentListParams } from '../services/appointmentService';
 
-import {
-  doctorAppointmentService,
-  type DoctorAppointmentListParams,
-} from '../services/doctorAppointmentService';
-
-export function useDoctorAppointments(
-  params: DoctorAppointmentListParams,
-) {
+export function useDoctorAppointments(params: DoctorAppointmentListParams) {
   return useQuery({
-    queryKey: appointmentKeys.doctor(
-      params.page,
-      params.size,
-    ),
-
-    queryFn: () =>
-      doctorAppointmentService.getAppointments(
-        params,
-      ),
-
+    queryKey: appointmentKeys.doctor(params.page, params.size),
+    queryFn: () => appointmentService.getDoctorAppointments(params),
     placeholderData: keepPreviousData,
   });
 }
