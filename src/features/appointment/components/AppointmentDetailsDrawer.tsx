@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import {  useState } from 'react';
 import {
     Alert,
     Box,
@@ -37,11 +37,6 @@ export default function AppointmentDetailsDrawer({
     const [status, setStatus] = useState<AppointmentStatus>('SCHEDULED');
     const updateStatus = useUpdateAppointmentStatus();
 
-    useEffect(() => {
-        if (appointment) {
-            setStatus(appointment.status);
-        }
-    }, [appointment]);
     if (!appointment) return null;
 
     const handleStatusUpdate = async () => {
