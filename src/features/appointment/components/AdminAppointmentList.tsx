@@ -227,6 +227,7 @@ export default function AdminAppointmentList() {
         onClose={() => setIsBookAppointmentOpen(false)}
       />
       <AppointmentDetailsDrawer
+        key={selectedAppointment?.uuid ?? 'appointment-details'}
         open={Boolean(selectedAppointment)}
         appointment={selectedAppointment}
         onClose={() => setSelectedAppointment(null)}
