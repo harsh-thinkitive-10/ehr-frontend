@@ -4,9 +4,7 @@ interface ManagementPersonCellProps {
   name: string;
 }
 
-export default function ManagementPersonCell({
-  name,
-}: ManagementPersonCellProps) {
+export default function ManagementPersonCell({ name }: ManagementPersonCellProps) {
   const initials = name
     .trim()
     .split(/\s+/)
@@ -17,10 +15,10 @@ export default function ManagementPersonCell({
 
   return (
     <Stack direction="row" spacing={1.5} sx={{ alignItems: 'center' }}>
-      <Avatar sx={{ width: 36, height: 36, fontSize: 14, bgcolor: '#eaf3ff', color: 'primary.main' }}>
+      <Avatar sx={{ width: 36, height: 36, fontSize: 14 }}>
         {initials}
       </Avatar>
-      <Typography variant="body2" sx={{ fontWeight: 600, color: 'text.primary' }}>
+      <Typography variant="body2" sx={{ fontWeight: 600 }}>
         {name}
       </Typography>
     </Stack>

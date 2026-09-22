@@ -294,7 +294,7 @@ export default function ManagementPage() {
         <Box sx={{ px: 3.5, py: 2.5, borderBottom: 1, borderColor: 'divider' }}>
           <Stack direction="row" sx={{ alignItems: 'center', justifyContent: 'space-between' }}>
             <Stack direction="row" spacing={2} sx={{ alignItems: 'center' }}>
-              <Box sx={{ width: 56, height: 56, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', bgcolor: 'primary.50', color: 'primary.main' }}>
+              <Box sx={{ width: 56, height: 56, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', bgcolor: 'primary.light', color: 'primary.main' }}>
                 <MedicalServicesOutlinedIcon sx={{ fontSize: 30 }} />
               </Box>
               <Box>

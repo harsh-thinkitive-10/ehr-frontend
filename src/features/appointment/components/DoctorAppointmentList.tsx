@@ -1,7 +1,4 @@
-import {
-  useMemo,
-  useState,
-} from 'react';
+import { useMemo, useState } from 'react';
 
 import {
   Avatar,
@@ -30,64 +27,26 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 
 import { useDoctorAppointments } from '../hooks/useDoctorAppointments';
 
-import type {
-  DoctorAppointment,
-} from '../types/doctorAppointment';
-import type {
-  AppointmentStatus,
-} from '../types/appointment';
+import type { DoctorAppointment } from '../types/doctorAppointment';
+import type { AppointmentStatus } from '../types/appointment';
 
-type AppointmentFilter =
-  | 'ALL'
-  | AppointmentStatus;
+type AppointmentFilter = 'ALL' | AppointmentStatus;
 
 const PAGE_SIZE = 10;
 
-const appointmentFilters: {
-  value: AppointmentFilter;
-  label: string;
-}[] = [
-  {
-    value: 'ALL',
-    label: 'All',
-  },
-  {
-    value: 'SCHEDULED',
-    label: 'Scheduled',
-  },
-  {
-    value: 'PENDING',
-    label: 'Pending',
-  },
-  {
-    value: 'CHECK_IN',
-    label: 'Check In',
-  },
-  {
-    value: 'COMPLETED',
-    label: 'Completed',
-  },
-  {
-    value: 'CANCELLED',
-    label: 'Cancelled',
-  },
-  {
-    value: 'NO_SHOW',
-    label: 'No Show',
-  },
-  {
-    value: 'RESCHEDULED',
-    label: 'Rescheduled',
-  },
-  {
-    value: 'CLOSED',
-    label: 'Closed',
-  },
+const appointmentFilters: { value: AppointmentFilter; label: string }[] = [
+  { value: 'ALL', label: 'All' },
+  { value: 'SCHEDULED', label: 'Scheduled' },
+  { value: 'PENDING', label: 'Pending' },
+  { value: 'CHECK_IN', label: 'Check In' },
+  { value: 'COMPLETED', label: 'Completed' },
+  { value: 'CANCELLED', label: 'Cancelled' },
+  { value: 'NO_SHOW', label: 'No Show' },
+  { value: 'RESCHEDULED', label: 'Rescheduled' },
+  { value: 'CLOSED', label: 'Closed' },
 ];
 
-function getPatientInitials(
-  name: string,
-) {
+function getPatientInitials(name: string) {
   return name
     .split(' ')
     .filter(Boolean)
@@ -97,184 +56,98 @@ function getPatientInitials(
     .toUpperCase();
 }
 
-function formatAppointmentDate(
-  date: string,
-) {
+function formatAppointmentDate(date: string) {
   const value = new Date(date);
 
   return {
-    date: value.toLocaleDateString(
-      'en-IN',
-      {
-        day: '2-digit',
-        month: 'short',
-        year: 'numeric',
-      },
-    ),
-
-    time: value.toLocaleTimeString(
-      'en-IN',
-      {
-        hour: 'numeric',
-        minute: '2-digit',
-      },
-    ),
+    date: value.toLocaleDateString('en-IN', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+    }),
+    time: value.toLocaleTimeString('en-IN', {
+      hour: 'numeric',
+      minute: '2-digit',
+    }),
   };
 }
 
-function getStatusLabel(
-  status: AppointmentStatus,
-) {
+function getStatusLabel(status: AppointmentStatus) {
   return status.replaceAll('_', ' ');
 }
 
-function getStatusColor(
-  status: AppointmentStatus,
-):
-  | 'primary'
-  | 'success'
-  | 'warning'
-  | 'error'
-  | 'default' {
+function getStatusColor(status: AppointmentStatus): 'primary' | 'success' | 'warning' | 'error' | 'default' {
   switch (status) {
     case 'SCHEDULED':
       return 'primary';
-
     case 'PENDING':
-      return 'warning';
-
     case 'CHECK_IN':
-      return 'warning';
-
-    case 'COMPLETED':
-      return 'success';
-
-    case 'CANCELLED':
-      return 'error';
-
-    case 'NO_SHOW':
-      return 'error';
-
     case 'RESCHEDULED':
       return 'warning';
-
+    case 'COMPLETED':
+      return 'success';
+    case 'CANCELLED':
+    case 'NO_SHOW':
+      return 'error';
     case 'CLOSED':
-      return 'default';
-
     default:
       return 'default';
   }
 }
 
-function getFilterCount(
-  appointments: DoctorAppointment[],
-  filter: AppointmentFilter,
-) {
-  if (filter === 'ALL') {
-    return appointments.length;
-  }
-
-  return appointments.filter(
-    (appointment) =>
-      appointment.status === filter,
-  ).length;
+function getFilterCount(appointments: DoctorAppointment[], filter: AppointmentFilter) {
+  if (filter === 'ALL') return appointments.length;
+  return appointments.filter((appointment) => appointment.status === filter).length;
 }
 
 export default function DoctorAppointmentList() {
   const [page, setPage] = useState(0);
+  const [pageSize, setPageSize] = useState(PAGE_SIZE);
+  const [filter, setFilter] = useState<AppointmentFilter>('ALL');
+  const [filterAnchorEl, setFilterAnchorEl] = useState<null | HTMLElement>(null);
 
-  const [pageSize, setPageSize] =
-    useState(PAGE_SIZE);
-
-  const [filter, setFilter] =
-    useState<AppointmentFilter>('ALL');
-
-  const [filterAnchorEl, setFilterAnchorEl] =
-    useState<null | HTMLElement>(null);
-
-  const {
-    data,
-    isLoading,
-    isError,
-    error,
-  } = useDoctorAppointments({
+  const { data, isLoading, isError, error } = useDoctorAppointments({
     page,
     size: pageSize,
   });
 
-  const appointments = useMemo(
-    () => data?.content ?? [],
-    [data?.content],
-  );
+  const appointments = useMemo(() => data?.content ?? [], [data?.content]);
 
-  const filteredAppointments =
-    useMemo(() => {
-      if (filter === 'ALL') {
-        return appointments;
-      }
+  const filteredAppointments = useMemo(() => {
+    if (filter === 'ALL') return appointments;
+    return appointments.filter((appointment) => appointment.status === filter);
+  }, [appointments, filter]);
 
-      return appointments.filter(
-        (appointment) =>
-          appointment.status === filter,
-      );
-    }, [appointments, filter]);
+  const selectedFilterLabel = appointmentFilters.find((item) => item.value === filter)?.label ?? 'All';
 
-  const selectedFilterLabel =
-    appointmentFilters.find(
-      (item) =>
-        item.value === filter,
-    )?.label ?? 'All';
-
-  const handleFilterOpen = (
-    event: React.MouseEvent<HTMLElement>,
-  ) => {
-    setFilterAnchorEl(
-      event.currentTarget,
-    );
+  const handleFilterOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setFilterAnchorEl(event.currentTarget);
   };
 
   const handleFilterClose = () => {
     setFilterAnchorEl(null);
   };
 
-  const handleFilterChange = (
-    newFilter: AppointmentFilter,
-  ) => {
+  const handleFilterChange = (newFilter: AppointmentFilter) => {
     setFilter(newFilter);
     setPage(0);
     handleFilterClose();
   };
 
-  const handlePageChange = (
-    _event: unknown,
-    newPage: number,
-  ) => {
+  const handlePageChange = (_event: unknown, newPage: number) => {
     setPage(newPage);
   };
 
-  const handlePageSizeChange = (
-    event: React.ChangeEvent<
-      HTMLTextAreaElement | HTMLInputElement
-    >,
-  ) => {
-    setPageSize(
-      Number(event.target.value),
-    );
+  const handlePageSizeChange = (event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
+    setPageSize(Number(event.target.value));
     setPage(0);
   };
 
   if (isError) {
     return (
       <Box>
-        <Typography
-          color="error"
-          sx={{
-            fontWeight: 500,
-          }}
-        >
-          {error instanceof Error
-            ? error.message
-            : 'Unable to load your appointments.'}
+        <Typography color="error" sx={{ fontWeight: 500 }}>
+          {error instanceof Error ? error.message : 'Unable to load your appointments.'}
         </Typography>
       </Box>
     );
@@ -282,662 +155,251 @@ export default function DoctorAppointmentList() {
 
   return (
     <Box>
-      {/* =========================
-          PAGE HEADER
-      ========================== */}
-
       <Stack
-        direction={{
-          xs: 'column',
-          sm: 'row',
-        }}
+        direction={{ xs: 'column', sm: 'row' }}
         spacing={2}
         sx={{
           mb: 4,
-          alignItems: {
-            xs: 'flex-start',
-            sm: 'center',
-          },
-          justifyContent:
-            'space-between',
+          alignItems: { xs: 'flex-start', sm: 'center' },
+          justifyContent: 'space-between',
         }}
       >
         <Box>
-          <Typography
-            variant="h4"
-            sx={{
-              fontWeight: 700,
-              color: '#172b4d',
-              mb: 0.5,
-            }}
-          >
+          <Typography variant="h4" sx={{ fontWeight: 700, mb: 0.5 }}>
             Appointments
           </Typography>
 
-          <Typography
-            variant="body1"
-            sx={{
-              color: '#64748b',
-            }}
-          >
-            View and manage your patient
-            appointments.
+          <Typography variant="body1">
+            View and manage your patient appointments.
           </Typography>
         </Box>
 
-        {/* Header Actions */}
-
-        <Stack
-          direction="row"
-          spacing={1.5}
-        >
-          {/* Filter Button */}
-
+        <Stack direction="row" spacing={1.5}>
           <Button
             variant="outlined"
-            startIcon={
-              <FilterListIcon />
-            }
+            startIcon={<FilterListIcon />}
             onClick={handleFilterOpen}
-            sx={{
-              minHeight: 48,
-              px: 2.5,
-              borderRadius: '10px',
-              textTransform: 'none',
-              fontWeight: 600,
-            }}
+            sx={{ minHeight: 48, px: 2.5 }}
           >
             Filter
 
             {filter !== 'ALL' && (
-              <Chip
-                label={selectedFilterLabel}
-                size="small"
-                sx={{
-                  ml: 1,
-                  height: 24,
-                  fontWeight: 600,
-                }}
-              />
+              <Chip label={selectedFilterLabel} size="small" sx={{ ml: 1, height: 24 }} />
             )}
           </Button>
 
-          {/* Filter Menu */}
-
           <Menu
             anchorEl={filterAnchorEl}
-            open={Boolean(
-              filterAnchorEl,
-            )}
-            onClose={
-              handleFilterClose
-            }
+            open={Boolean(filterAnchorEl)}
+            onClose={handleFilterClose}
             slotProps={{
               paper: {
-                sx: {
-                  mt: 1,
-                  minWidth: 210,
-                  borderRadius: '10px',
-                },
+                sx: { mt: 1, minWidth: 210 },
               },
             }}
           >
-            {appointmentFilters.map(
-              (item) => {
-                const count =
-                  getFilterCount(
-                    appointments,
-                    item.value,
-                  );
+            {appointmentFilters.map((item) => {
+              const count = getFilterCount(appointments, item.value);
+              const isSelected = filter === item.value;
 
-                const isSelected =
-                  filter === item.value;
-
-                return (
-                  <MenuItem
-                    key={item.value}
-                    selected={
-                      isSelected
-                    }
-                    onClick={() =>
-                      handleFilterChange(
-                        item.value,
-                      )
-                    }
+              return (
+                <MenuItem
+                  key={item.value}
+                  selected={isSelected}
+                  onClick={() => handleFilterChange(item.value)}
+                  sx={{ minHeight: 44, px: 2 }}
+                >
+                  <Stack
+                    direction="row"
                     sx={{
-                      minHeight: 44,
-                      px: 2,
+                      width: '100%',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
                     }}
                   >
-                    <Stack
-                      direction="row"
-                      sx={{
-                        width: '100%',
-                        alignItems:
-                          'center',
-                        justifyContent:
-                          'space-between',
-                      }}
-                    >
-                      <Typography
-                        sx={{
-                          fontWeight:
-                            isSelected
-                              ? 600
-                              : 400,
-                        }}
-                      >
-                        {item.label}
-                      </Typography>
+                    <Typography sx={{ fontWeight: isSelected ? 600 : 400 }}>
+                      {item.label}
+                    </Typography>
 
-                      <Chip
-                        label={count}
-                        size="small"
-                        sx={{
-                          height: 22,
-                          minWidth: 28,
-                          fontSize:
-                            '0.75rem',
-                        }}
-                      />
-                    </Stack>
-                  </MenuItem>
-                );
-              },
-            )}
+                    <Chip label={count} size="small" sx={{ height: 22, minWidth: 28 }} />
+                  </Stack>
+                </MenuItem>
+              );
+            })}
           </Menu>
-
-          {/* Book Appointment */}
 
           <Button
             variant="contained"
-            startIcon={
-              <CalendarMonthIcon />
-            }
-            sx={{
-              minHeight: 48,
-              px: 2.5,
-              borderRadius: '10px',
-              textTransform: 'none',
-              fontWeight: 600,
-            }}
+            startIcon={<CalendarMonthIcon />}
+            sx={{ minHeight: 48, px: 2.5 }}
           >
             Book Appointment
           </Button>
         </Stack>
       </Stack>
 
-      {/* =========================
-          APPOINTMENT TABLE
-      ========================== */}
-
-      <TableContainer
-        component={Paper}
-        sx={{
-          borderRadius: '12px',
-          border:
-            '1px solid #e5e7eb',
-          boxShadow: 'none',
-          overflowX: 'auto',
-        }}
-      >
-        <Table
-          sx={{
-            minWidth: 1100,
-          }}
-        >
+      <TableContainer component={Paper} sx={{ overflowX: 'auto' }}>
+        <Table sx={{ minWidth: 1100 }}>
           <TableHead>
-            <TableRow
-              sx={{
-                backgroundColor:
-                  '#f8fafc',
-              }}
-            >
-              <TableCell
-                sx={{
-                  fontWeight: 600,
-                  color: '#64748b',
-                  width: 60,
-                }}
-              >
-                #
-              </TableCell>
-
-              <TableCell
-                sx={{
-                  fontWeight: 600,
-                  color: '#64748b',
-                  minWidth: 220,
-                }}
-              >
-                Patient
-              </TableCell>
-
-              <TableCell
-                sx={{
-                  fontWeight: 600,
-                  color: '#64748b',
-                  minWidth: 80,
-                }}
-              >
-                Age
-              </TableCell>
-
-              <TableCell
-                sx={{
-                  fontWeight: 600,
-                  color: '#64748b',
-                  minWidth: 100,
-                }}
-              >
-                Gender
-              </TableCell>
-
-              <TableCell
-                sx={{
-                  fontWeight: 600,
-                  color: '#64748b',
-                  minWidth: 180,
-                }}
-              >
-                Contact
-              </TableCell>
-
-              <TableCell
-                sx={{
-                  fontWeight: 600,
-                  color: '#64748b',
-                  minWidth: 180,
-                }}
-              >
-                Reason for Visit
-              </TableCell>
-
-              <TableCell
-                sx={{
-                  fontWeight: 600,
-                  color: '#64748b',
-                  minWidth: 170,
-                }}
-              >
-                Date & Time
-              </TableCell>
-
-              <TableCell
-                sx={{
-                  fontWeight: 600,
-                  color: '#64748b',
-                  minWidth: 130,
-                }}
-              >
-                Status
-              </TableCell>
-
-              <TableCell
-                sx={{
-                  fontWeight: 600,
-                  color: '#64748b',
-                  minWidth: 150,
-                }}
-              >
-                Actions
-              </TableCell>
+            <TableRow>
+              <TableCell width={60}>#</TableCell>
+              <TableCell sx={{ minWidth: 220 }}>Patient</TableCell>
+              <TableCell sx={{ minWidth: 80 }}>Age</TableCell>
+              <TableCell sx={{ minWidth: 100 }}>Gender</TableCell>
+              <TableCell sx={{ minWidth: 180 }}>Contact</TableCell>
+              <TableCell sx={{ minWidth: 180 }}>Reason for Visit</TableCell>
+              <TableCell sx={{ minWidth: 170 }}>Date & Time</TableCell>
+              <TableCell sx={{ minWidth: 130 }}>Status</TableCell>
+              <TableCell sx={{ minWidth: 150 }}>Actions</TableCell>
             </TableRow>
           </TableHead>
 
           <TableBody>
-            {/* Loading */}
-
             {isLoading &&
-              Array.from({
-                length: 3,
-              }).map((_, index) => (
-                <TableRow
-                  key={`loading-${index}`}
-                >
-                  <TableCell
-                    colSpan={9}
-                    sx={{
-                      py: 4,
-                      color:
-                        'text.secondary',
-                    }}
-                  >
+              Array.from({ length: 3 }).map((_, index) => (
+                <TableRow key={`loading-${index}`}>
+                  <TableCell colSpan={9} sx={{ py: 4, color: 'text.secondary' }}>
                     Loading appointments...
                   </TableCell>
                 </TableRow>
               ))}
 
-            {/* Empty */}
+            {!isLoading && filteredAppointments.length === 0 && (
+              <TableRow>
+                <TableCell colSpan={9} align="center" sx={{ py: 8 }}>
+                  <Stack spacing={1} sx={{ alignItems: 'center' }}>
+                    <EventIcon sx={{ fontSize: 40, color: 'text.secondary' }} />
+
+                    <Typography variant="h6">
+                      No appointments found
+                    </Typography>
+
+                    <Typography variant="body2">
+                      No appointments are available for this filter.
+                    </Typography>
+                  </Stack>
+                </TableCell>
+              </TableRow>
+            )}
 
             {!isLoading &&
-              filteredAppointments.length ===
-                0 && (
-                <TableRow>
-                  <TableCell
-                    colSpan={9}
-                    align="center"
-                    sx={{
-                      py: 8,
-                    }}
+              filteredAppointments.map((appointment, index) => {
+                const date = formatAppointmentDate(appointment.appointmentDate);
+
+                return (
+                  <TableRow
+                    key={`${appointment.patientEmail}-${appointment.appointmentDate}-${index}`}
+                    hover
                   >
-                    <Stack
-                      spacing={1}
-                      sx={{
-                        alignItems:
-                          'center',
-                      }}
-                    >
-                      <EventIcon
-                        sx={{
-                          fontSize: 40,
-                          color:
-                            'text.secondary',
-                        }}
+                    <TableCell>
+                      <Typography variant="body2">
+                        {page * pageSize + index + 1}
+                      </Typography>
+                    </TableCell>
+
+                    <TableCell>
+                      <Stack direction="row" spacing={1.5} sx={{ alignItems: 'center' }}>
+                        <Avatar
+                          sx={{
+                            width: 42,
+                            height: 42,
+                            bgcolor: 'primary.light',
+                            color: 'primary.main',
+                            fontSize: '0.8125rem',
+                            fontWeight: 600,
+                          }}
+                        >
+                          {getPatientInitials(appointment.patientFullName)}
+                        </Avatar>
+
+                        <Stack spacing={0.25}>
+                          <Typography sx={{ fontWeight: 600 }}>
+                            {appointment.patientFullName}
+                          </Typography>
+
+                          <Typography variant="body2">
+                            {appointment.patientEmail}
+                          </Typography>
+                        </Stack>
+                      </Stack>
+                    </TableCell>
+
+                    <TableCell>
+                      <Typography variant="body2">{appointment.patientAge}</Typography>
+                    </TableCell>
+
+                    <TableCell>
+                      <Typography variant="body2">{appointment.patientGender}</Typography>
+                    </TableCell>
+
+                    <TableCell>
+                      <Typography variant="body2">{appointment.patientPhoneNumber}</Typography>
+                      <Typography variant="body2">{appointment.patientEmail}</Typography>
+                    </TableCell>
+
+                    <TableCell>
+                      <Typography variant="body2">{appointment.reasonForVisit}</Typography>
+                    </TableCell>
+
+                    <TableCell>
+                      <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
+                        <EventIcon sx={{ fontSize: 20, color: 'text.secondary' }} />
+
+                        <Box>
+                          <Typography variant="body2" sx={{ fontWeight: 500, color: 'text.primary' }}>
+                            {date.date}
+                          </Typography>
+
+                          <Typography variant="body2">
+                            {date.time}
+                          </Typography>
+                        </Box>
+                      </Stack>
+                    </TableCell>
+
+                    <TableCell>
+                      <Chip
+                        label={getStatusLabel(appointment.status)}
+                        color={getStatusColor(appointment.status)}
+                        size="small"
                       />
+                    </TableCell>
 
-                      <Typography
-                        variant="h6"
+                    <TableCell>
+                      <Button
+                        variant="outlined"
+                        endIcon={<ChevronRightIcon />}
                         sx={{
-                          fontWeight: 600,
+                          minHeight: 40,
+                          px: 1.5,
+                          borderRadius: 1,
+                          whiteSpace: 'nowrap',
                         }}
                       >
-                        No appointments
-                        found
-                      </Typography>
-
-                      <Typography
-                        variant="body2"
-                        color="text.secondary"
-                      >
-                        No appointments
-                        are available
-                        for this
-                        filter.
-                      </Typography>
-                    </Stack>
-                  </TableCell>
-                </TableRow>
-              )}
-
-            {/* Appointments */}
-
-            {!isLoading &&
-              filteredAppointments.map(
-                (
-                  appointment,
-                  index,
-                ) => {
-                  const date =
-                    formatAppointmentDate(
-                      appointment.appointmentDate,
-                    );
-
-                  return (
-                    <TableRow
-                      key={`${appointment.patientEmail}-${appointment.appointmentDate}-${index}`}
-                      hover
-                    >
-                      {/* Number */}
-
-                      <TableCell>
-                        <Typography
-                          variant="body2"
-                          sx={{
-                            color:
-                              'text.secondary',
-                          }}
-                        >
-                          {page *
-                            pageSize +
-                            index +
-                            1}
-                        </Typography>
-                      </TableCell>
-
-                      {/* Patient */}
-
-                      <TableCell>
-                        <Stack
-                          direction="row"
-                          spacing={1.5}
-                          sx={{
-                            alignItems:
-                              'center',
-                          }}
-                        >
-                          <Avatar
-                            sx={{
-                              width: 42,
-                              height: 42,
-                              bgcolor:
-                                '#eaf3ff',
-                              color:
-                                'primary.main',
-                              fontSize:
-                                '0.85rem',
-                              fontWeight: 600,
-                            }}
-                          >
-                            {getPatientInitials(
-                              appointment.patientFullName,
-                            )}
-                          </Avatar>
-
-                          <Stack spacing={0.25}>
-                            <Typography
-                              sx={{
-                                fontWeight: 600,
-                                color:
-                                  'text.primary',
-                              }}
-                            >
-                              {
-                                appointment.patientFullName
-                              }
-                            </Typography>
-
-                            <Typography
-                              variant="body2"
-                              color="text.secondary"
-                            >
-                              {
-                                appointment.patientEmail
-                              }
-                            </Typography>
-                          </Stack>
-                        </Stack>
-                      </TableCell>
-
-                      {/* Age */}
-
-                      <TableCell>
-                        <Typography
-                          variant="body2"
-                          color="text.secondary"
-                        >
-                          {
-                            appointment.patientAge
-                          }
-                        </Typography>
-                      </TableCell>
-
-                      {/* Gender */}
-
-                      <TableCell>
-                        <Typography
-                          variant="body2"
-                          color="text.secondary"
-                        >
-                          {
-                            appointment.patientGender
-                          }
-                        </Typography>
-                      </TableCell>
-
-                      {/* Contact */}
-
-                      <TableCell>
-                        <Typography
-                          variant="body2"
-                          color="text.secondary"
-                        >
-                          {
-                            appointment.patientPhoneNumber
-                          }
-                        </Typography>
-
-                        <Typography
-                          variant="body2"
-                          color="text.secondary"
-                        >
-                          {
-                            appointment.patientEmail
-                          }
-                        </Typography>
-                      </TableCell>
-
-                      {/* Reason */}
-
-                      <TableCell>
-                        <Typography
-                          variant="body2"
-                          color="text.secondary"
-                        >
-                          {
-                            appointment.reasonForVisit
-                          }
-                        </Typography>
-                      </TableCell>
-
-                      {/* Date */}
-
-                      <TableCell>
-                        <Stack
-                          direction="row"
-                          spacing={1}
-                          sx={{
-                            alignItems:
-                              'center',
-                          }}
-                        >
-                          <EventIcon
-                            sx={{
-                              fontSize: 20,
-                              color:
-                                'text.secondary',
-                            }}
-                          />
-
-                          <Box>
-                            <Typography
-                              variant="body2"
-                              sx={{
-                                fontWeight: 500,
-                                color:
-                                  'text.primary',
-                              }}
-                            >
-                              {date.date}
-                            </Typography>
-
-                            <Typography
-                              variant="body2"
-                              sx={{
-                                color:
-                                  'text.secondary',
-                              }}
-                            >
-                              {date.time}
-                            </Typography>
-                          </Box>
-                        </Stack>
-                      </TableCell>
-
-                      {/* Status */}
-
-                      <TableCell>
-                        <Chip
-                          label={getStatusLabel(
-                            appointment.status,
-                          )}
-                          color={getStatusColor(
-                            appointment.status,
-                          )}
-                          size="small"
-                          sx={{
-                            fontWeight: 600,
-                          }}
-                        />
-                      </TableCell>
-
-                      {/* Actions */}
-
-                      <TableCell>
-                        <Button
-                          variant="outlined"
-                          endIcon={
-                            <ChevronRightIcon />
-                          }
-                          sx={{
-                            minHeight: 40,
-                            px: 1.5,
-                            borderRadius:
-                              '8px',
-                            textTransform:
-                              'none',
-                            fontWeight: 600,
-                            whiteSpace:
-                              'nowrap',
-                          }}
-                        >
-                          View Details
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  );
-                },
-              )}
+                        View Details
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
           </TableBody>
         </Table>
 
         <Divider />
 
-        {/* Pagination */}
-
-        {!isLoading &&
-          data && (
-            <TablePagination
-              component="div"
-              count={
-                data.totalElements
-              }
-              page={data.number}
-              onPageChange={
-                handlePageChange
-              }
-              rowsPerPage={
-                pageSize
-              }
-              onRowsPerPageChange={
-                handlePageSizeChange
-              }
-              rowsPerPageOptions={[
-                10,
-                20,
-                50,
-                100,
-              ]}
-              labelRowsPerPage="Show"
-              labelDisplayedRows={({
-                from,
-                to,
-                count,
-              }) =>
-                `${from}–${to} of ${count}`
-              }
-            />
-          )}
+        {!isLoading && data && (
+          <TablePagination
+            component="div"
+            count={data.totalElements}
+            page={data.number}
+            onPageChange={handlePageChange}
+            rowsPerPage={pageSize}
+            onRowsPerPageChange={handlePageSizeChange}
+            rowsPerPageOptions={[10, 20, 50, 100]}
+            labelRowsPerPage="Show"
+            labelDisplayedRows={({ from, to, count }) => `${from}–${to} of ${count}`}
+          />
+        )}
       </TableContainer>
     </Box>
   );

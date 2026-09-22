@@ -29,8 +29,8 @@ interface SidebarProps {
   onToggle: () => void;
 }
 
-const SIDEBAR_WIDTH = 250;
-const SIDEBAR_COLLAPSED_WIDTH = 72;
+const SIDEBAR_WIDTH = 200;
+const SIDEBAR_COLLAPSED_WIDTH = 60;
 
 export default function Sidebar({
   collapsed,
@@ -151,6 +151,7 @@ export default function Sidebar({
       path === '/appointments' &&
       roles.includes(ROLES.DOCTOR)
     ) {
+      
       return '/doctor/appointments';
     }
 
@@ -188,7 +189,7 @@ export default function Sidebar({
       <Box
         sx={{
           position: 'relative',
-          height: 72,
+          height: 55,
           flexShrink: 0,
         }}
       >

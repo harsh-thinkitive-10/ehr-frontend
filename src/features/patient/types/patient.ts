@@ -10,6 +10,7 @@ export interface Patient {
   gender: PatientGender;
   phoneNumber: string;
   email: string;
+  isActive: boolean;
 }
 
 export interface PatientPage {

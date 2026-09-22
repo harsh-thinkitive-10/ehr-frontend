@@ -148,6 +148,12 @@ function PatientRow({
         {patient.email}
       </TableCell>
 
+      {/* Status */}
+
+     <TableCell>
+        {patient.isActive ? 'Active' : 'Inactive'}
+      </TableCell>
+
       {/* Actions */}
 
       <TableCell>

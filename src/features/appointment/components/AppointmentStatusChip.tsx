@@ -1,11 +1,5 @@
-import {
-  Chip,
-} from '@mui/material';
-
-import type {
-  AppointmentStatus,
-} from '../types/appointment';
-
+import { Chip } from '@mui/material';
+import type { AppointmentStatus } from '../types/appointment';
 import {
   getAppointmentStatusColor,
   getAppointmentStatusLabel,
@@ -15,21 +9,13 @@ interface AppointmentStatusChipProps {
   status: AppointmentStatus;
 }
 
-export default function AppointmentStatusChip({
-  status,
-}: AppointmentStatusChipProps) {
+export default function AppointmentStatusChip({ status }: AppointmentStatusChipProps) {
   return (
     <Chip
-      label={getAppointmentStatusLabel(
-        status,
-      )}
-      color={getAppointmentStatusColor(
-        status,
-      )}
+      label={getAppointmentStatusLabel(status)}
+      color={getAppointmentStatusColor(status)}
       size="small"
-      sx={{
-        fontWeight: 600,
-      }}
+      sx={{ fontWeight: 600 }}
     />
   );
 }

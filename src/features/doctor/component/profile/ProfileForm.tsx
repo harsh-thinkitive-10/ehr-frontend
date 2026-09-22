@@ -113,6 +113,7 @@ export default function DoctorProfileForm({
       />
 
       <Input
+        disabled
         label="Email"
         type="email"
         {...register('email')}

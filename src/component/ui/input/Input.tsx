@@ -1,23 +1,13 @@
-import {
-  InputBase,
-  FormControl,
-  FormHelperText,
-  InputLabel,
-} from '@mui/material';
-
+import { InputBase, FormControl, FormHelperText, InputLabel } from '@mui/material';
 import type { InputBaseProps } from '@mui/material/InputBase';
+import { colors, ui } from '../../../app/theme';
 
 export interface InputProps extends InputBaseProps {
   label?: string;
   helperText?: string;
 }
 
-export default function Input({
-  label,
-  helperText,
-  error,
-  ...props
-}: InputProps) {
+export default function Input({ label, helperText, error, ...props }: InputProps) {
   return (
     <FormControl fullWidth error={error}>
       {label && (
@@ -26,9 +16,9 @@ export default function Input({
           sx={{
             position: 'static',
             transform: 'none',
-            fontSize: '0.9rem',
+            fontSize: '0.8125rem',
             fontWeight: 600,
-            color: '#1e293b',
+            color: colors.textPrimary,
             mb: 1,
           }}
         >
@@ -40,25 +30,19 @@ export default function Input({
         {...props}
         sx={{
           border: '1px solid',
-          borderColor: error
-            ? 'error.main'
-            : '#d5dce5',
-          borderRadius: '10px',
+          borderColor: error ? colors.error : colors.inputBorder,
+          borderRadius: ui.input.radius,
           px: 2,
           py: 1.5,
-          fontSize: '0.95rem',
+          fontSize: '0.875rem',
           transition: 'all 0.2s ease',
 
           '&:hover': {
-            borderColor: error
-              ? 'error.main'
-              : '#94a3b8',
+            borderColor: error ? colors.error : colors.inputHover,
           },
 
           '&.Mui-focused': {
-            borderColor: error
-              ? 'error.main'
-              : '#1976d2',
+            borderColor: error ? colors.error : colors.primary,
             boxShadow: error
               ? '0 0 0 3px rgba(211,47,47,0.08)'
               : '0 0 0 3px rgba(25,118,210,0.08)',
@@ -72,11 +56,7 @@ export default function Input({
         }}
       />
 
-      {helperText && (
-        <FormHelperText sx={{ mx: 0 }}>
-          {helperText}
-        </FormHelperText>
-      )}
+      {helperText && <FormHelperText sx={{ mx: 0 }}>{helperText}</FormHelperText>}
     </FormControl>
   );
 }

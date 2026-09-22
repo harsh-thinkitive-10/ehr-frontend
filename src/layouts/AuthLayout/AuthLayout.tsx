@@ -226,6 +226,8 @@ export default function AuthLayout({
                 },
                 lineHeight: 1.15,
                 mb: 3,
+                color:
+                  'rgba(255,255,255,0.78)',
               }}
             >
               Smarter Records.

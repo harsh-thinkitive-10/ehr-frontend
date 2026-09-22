@@ -5,10 +5,7 @@ export interface ButtonProps extends MuiButtonProps {
   children: React.ReactNode;
 }
 
-export default function Button({
-  children,
-  ...props
-}: ButtonProps) {
+export default function Button({ children, ...props }: ButtonProps) {
   return (
     <MuiButton
       variant="contained"
@@ -16,17 +13,13 @@ export default function Button({
       {...props}
       sx={{
         minHeight: 52,
-        borderRadius: '10px',
-        textTransform: 'none',
-        fontSize: '1rem',
-        fontWeight: 600,
-        boxShadow: 'none',
-
-        '&:hover': {
-          boxShadow: 'none',
-        },
-
+        borderRadius: 1,
+        fontSize: '0.8125rem',
         ...props.sx,
+
+        ':hover': {
+          boxShadow: 'none',
+        }, 
       }}
     >
       {children}

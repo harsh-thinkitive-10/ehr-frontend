@@ -1,6 +1,6 @@
 import { createTheme } from '@mui/material/styles';
 
-const colors = {
+export const colors = {
   primary: '#1976D2',
   primaryLight: '#EAF3FF',
   primaryDark: '#1259A5',
@@ -40,12 +40,12 @@ const colors = {
   black: '#000000',
 };
 
-const ui = {
+export const ui = {
   borderRadius: {
-    small: 6,
-    medium: 10,
-    large: 12,
-    xlarge: 16,
+    small: 2,
+    medium: 3,
+    large: 4,
+    xlarge: 5,
   },
 
   button: {
@@ -55,8 +55,8 @@ const ui = {
   },
 
   input: {
-    height: 48,
-    radius: 10,
+    height: 40,
+    radius: 3,
   },
 
   card: {
@@ -145,89 +145,89 @@ export const theme = createTheme({
     fontFamily: '"Inter", "Roboto", "Helvetica", "Arial", sans-serif',
 
     h1: {
-      fontSize: '2.25rem',
+      fontSize: '1.75rem',
       lineHeight: 1.2,
       fontWeight: 700,
       color: colors.textPrimary,
     },
 
     h2: {
-      fontSize: '2rem',
+      fontSize: '1.5rem',
       lineHeight: 1.25,
       fontWeight: 700,
       color: colors.textPrimary,
     },
 
     h3: {
-      fontSize: '1.75rem',
+      fontSize: '1.25rem',
       lineHeight: 1.3,
       fontWeight: 700,
       color: colors.textPrimary,
     },
 
     h4: {
-      fontSize: '1.5rem',
+      fontSize: '1.125rem',
       lineHeight: 1.35,
       fontWeight: 700,
       color: colors.textPrimary,
     },
 
     h5: {
-      fontSize: '1.25rem',
+      fontSize: '1rem',
       lineHeight: 1.4,
       fontWeight: 700,
       color: colors.textPrimary,
     },
 
     h6: {
-      fontSize: '1.125rem',
+      fontSize: '0.875rem',
       lineHeight: 1.45,
       fontWeight: 600,
       color: colors.textPrimary,
     },
 
     body1: {
-      fontSize: '0.95rem',
-      lineHeight: 1.6,
-      color: colors.textSecondary,
-    },
-
-    body2: {
       fontSize: '0.875rem',
       lineHeight: 1.5,
       color: colors.textSecondary,
     },
 
-    subtitle1: {
-      fontSize: '1rem',
-      lineHeight: 1.5,
-      fontWeight: 600,
-      color: colors.textPrimary,
+    body2: {
+      fontSize: '0.8125rem',
+      lineHeight: 1.45,
+      color: colors.textSecondary,
     },
 
-    subtitle2: {
+    subtitle1: {
       fontSize: '0.875rem',
       lineHeight: 1.45,
       fontWeight: 600,
       color: colors.textPrimary,
     },
 
+    subtitle2: {
+      fontSize: '0.8125rem',
+      lineHeight: 1.4,
+      fontWeight: 600,
+      color: colors.textPrimary,
+    },
+
     button: {
-      fontSize: '0.875rem',
-      lineHeight: 1.5,
+      fontSize: '0.8125rem',
+      lineHeight: 1.4,
       textTransform: 'none',
       fontWeight: 600,
     },
 
     caption: {
-      fontSize: '0.75rem',
+      fontSize: '0.6875rem',
       lineHeight: 1.4,
       color: colors.textSecondary,
     },
 
     overline: {
-      fontSize: '0.75rem',
-      lineHeight: 1.5,
+      fontSize: '0.6875rem',
+      lineHeight: 1.4,
       fontWeight: 600,
       letterSpacing: '0.05em',
       color: colors.textSecondary,
@@ -357,6 +357,7 @@ export const theme = createTheme({
       defaultProps: {
         variant: 'outlined',
         fullWidth: true,
+        
       },
     },
 

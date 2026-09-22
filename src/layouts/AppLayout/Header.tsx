@@ -108,8 +108,8 @@ export default function Header({
       >
         <Toolbar
           sx={{
-            minHeight: '70px !important',
-            px: 4,
+            minHeight: '55px !important',
+            px: 2,
             justifyContent: 'space-between',
           }}
         >

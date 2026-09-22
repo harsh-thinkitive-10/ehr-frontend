@@ -5,12 +5,11 @@ import { Box } from '@mui/material';
 import Header from './Header';
 import Sidebar from './Sidebar';
 
-export const SIDEBAR_WIDTH = 250;
-export const SIDEBAR_COLLAPSED_WIDTH = 72;
+export const SIDEBAR_WIDTH = 200;
+export const SIDEBAR_COLLAPSED_WIDTH = 60;
 
 export default function AppLayout() {
-  const [collapsed, setCollapsed] =
-    useState(false);
+  const [collapsed, setCollapsed] = useState(false);
 
   const sidebarWidth = collapsed
     ? SIDEBAR_COLLAPSED_WIDTH
@@ -43,7 +42,7 @@ export default function AppLayout() {
         component="main"
         sx={{
           ml: `${sidebarWidth}px`,
-          pt: '72px',
+          pt: '65px',
           minHeight: '100vh',
           width: `calc(100% - ${sidebarWidth}px)`,
           transition:
@@ -52,7 +51,7 @@ export default function AppLayout() {
       >
         <Box
           sx={{
-            p: 4,
+            p: 1.25,
             width: '100%',
           }}
         >
