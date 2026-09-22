@@ -6,4 +6,6 @@ export interface BookAppointmentRequest {
   status: AppointmentStatus;
   patientUuid: string;
   doctorUuid: string;
+  locationUuid: string;
 }
+

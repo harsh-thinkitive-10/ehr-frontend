@@ -30,6 +30,8 @@ import { useUpdateDoctor } from '../../doctor/hooks/useUpdateDoctor';
 
 import type { DoctorFormValues } from '../../doctor/schemas/doctor.schema';
 
+import LocationManagementPage from '../../location/pages/LocationManagementPage';
+
 export default function ManagementPage() {
   const queryClient =
     useQueryClient();
@@ -121,25 +123,6 @@ export default function ManagementPage() {
       {/* =====================================================
           PAGE HEADER
           ===================================================== */}
-
-      {/* <Stack
-        spacing={0.5}
-        sx={{
-          mb: 2,
-        }}
-      >
-        <Typography variant="h5">
-          Management
-        </Typography>
-
-        <Typography
-          variant="body2"
-          color="text.secondary"
-        >
-          Manage providers, locations and
-          other master data
-        </Typography>
-      </Stack> */}
 
       {/* =====================================================
           MANAGEMENT TABS
@@ -265,43 +248,14 @@ export default function ManagementPage() {
         <Box
           sx={{
             mt: 1,
-            minHeight: 300,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            backgroundColor:
-              'background.paper',
+            backgroundColor: 'background.paper',
             border: 1,
             borderColor: 'divider',
             borderRadius: 2,
+            p: { xs: 2, md: 3 },
           }}
         >
-          <Stack
-            spacing={1}
-            sx={{
-              alignItems: 'center',
-              textAlign: 'center',
-            }}
-          >
-            <LocationOnOutlinedIcon
-              sx={{
-                fontSize: 40,
-                color: 'text.secondary',
-              }}
-            />
-
-            <Typography variant="h6">
-              Locations
-            </Typography>
-
-            <Typography
-              variant="body2"
-              color="text.secondary"
-            >
-              Location management will be
-              added next.
-            </Typography>
-          </Stack>
+          <LocationManagementPage />
         </Box>
       )}
 
@@ -331,7 +285,7 @@ export default function ManagementPage() {
             loading={registerDoctor.isPending}
             errorMessage={errorMessage}
             onCancel={() => setAddDoctorOpen(false)}
-            onSubmit={handleRegisterDoctor}
+            onSubmit={handleRegisterDoctor} 
           />
         </DialogContent>
       </Dialog>

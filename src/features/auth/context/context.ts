@@ -9,6 +9,7 @@ interface AuthContextValue {
   roles: Role[];
   user: AuthUser | null;
   isAuthenticated: boolean;
+  isInitializing: boolean;
   login: (data: LoginResponse) => void;
   logout: () => Promise<void>;
 }

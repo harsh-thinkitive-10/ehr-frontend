@@ -27,6 +27,7 @@ export const doctorSchema =
                 0,
                 'Consultation fee cannot be negative',
             ),
+        
     });
 
 export type DoctorFormValues =
