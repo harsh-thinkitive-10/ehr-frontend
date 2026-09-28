@@ -35,7 +35,7 @@ interface BookAppointmentFormProps {
 }
 
 export default function BookAppointmentForm({ onSuccess }: BookAppointmentFormProps) {
-    const { control, handleSubmit, reset, setValue, setError, clearErrors, formState: { errors } } = useForm<BookAppointmentFormValues>({
+    const { control, handleSubmit, reset, setValue, setError, clearErrors} = useForm<BookAppointmentFormValues>({
         resolver: zodResolver(bookAppointmentSchema),
         mode: 'onSubmit',
         reValidateMode: 'onChange',
@@ -100,6 +100,7 @@ export default function BookAppointmentForm({ onSuccess }: BookAppointmentFormPr
             reset();
             onSuccess(response?.message ?? 'Appointment created successfully.');
         } catch (error) {
+            console.error('Failed to book appointment:', error);
             setValue('appointmentTime', '', { shouldValidate: true });
             await refetchSlots();
             setError('appointmentTime', { type: 'server', message: 'Failed to book appointment. Please try again.' });

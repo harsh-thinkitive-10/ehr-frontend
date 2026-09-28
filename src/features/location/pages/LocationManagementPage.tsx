@@ -22,7 +22,6 @@ export default function LocationManagementPage() {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(20);
   const [searchInput, setSearchInput] = useState('');
-  const [search, setSearch] = useState('');
   const [addOpen, setAddOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [editLocation, setEditLocation] = useState<Location | null>(null);
@@ -40,7 +39,6 @@ export default function LocationManagementPage() {
   const locations = data?.data.content ?? [];
 
   const handleSearch = () => {
-    setSearch(searchInput.trim());
     setPage(0);
   };
 
