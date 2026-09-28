@@ -1,10 +1,12 @@
-import { useQuery } from '@tanstack/react-query';
+import { useGetPatientDashboard } from '../../../sdk/generated/patient/patient';
 
-import { patientService } from '../services/patientService';
+import type { PatientDashboard } from '../types/dashboard.types';
 
 export function usePatientDashboard() {
-    return useQuery({
-        queryKey: ['patient', 'dashboard'],
-        queryFn: patientService.getDashboard,
+    return useGetPatientDashboard({
+        query: {
+            select: (dashboard) =>
+                dashboard as unknown as PatientDashboard,
+        },
     });
 }

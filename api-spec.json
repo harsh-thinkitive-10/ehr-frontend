@@ -1,46 +1,64 @@
 {
   "openapi": "3.1.0",
-  "info": { "title": "OpenAPI definition", "version": "v0" },
+  "info": {
+    "title": "OpenAPI definition",
+    "version": "v0"
+  },
   "servers": [
-    { "url": "http://localhost:8080", "description": "Generated server url" }
+    {
+      "url": "http://localhost:8080",
+      "description": "Generated server url"
+    }
   ],
   "paths": {
-    "/api/v1/patient/{id}": {
+    "/api/v1/tax/{uuid}": {
       "get": {
-        "tags": ["patient-controller"],
-        "operationId": "getPatientById",
+        "tags": ["tax-controller"],
+        "operationId": "getTax",
         "parameters": [
           {
-            "name": "id",
+            "name": "uuid",
             "in": "path",
             "required": true,
-            "schema": { "type": "integer", "format": "int64" }
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
           }
         ],
         "responses": {
           "200": {
             "description": "OK",
             "content": {
-              "*/*": { "schema": { "$ref": "#/components/schemas/PatientDTO" } }
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Response"
+                }
+              }
             }
           }
         }
       },
       "put": {
-        "tags": ["patient-controller"],
-        "operationId": "changePatient",
+        "tags": ["tax-controller"],
+        "operationId": "updateTax",
         "parameters": [
           {
-            "name": "id",
+            "name": "uuid",
             "in": "path",
             "required": true,
-            "schema": { "type": "integer", "format": "int64" }
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
           }
         ],
         "requestBody": {
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/PatientDTO" }
+              "schema": {
+                "$ref": "#/components/schemas/TaxDTO"
+              }
             }
           },
           "required": true
@@ -48,7 +66,72 @@
         "responses": {
           "200": {
             "description": "OK",
-            "content": { "*/*": { "schema": { "type": "string" } } }
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Response"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["tax-controller"],
+        "operationId": "deleteTax",
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/v1/patient/{uuid}": {
+      "put": {
+        "tags": ["patient-controller"],
+        "operationId": "updatePatient",
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PatientDTO"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Response"
+                }
+              }
+            }
           }
         }
       },
@@ -57,13 +140,265 @@
         "operationId": "deletePatient",
         "parameters": [
           {
-            "name": "id",
+            "name": "uuid",
             "in": "path",
             "required": true,
-            "schema": { "type": "integer", "format": "int64" }
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
           }
         ],
-        "responses": { "200": { "description": "OK" } }
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Response"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/location/{uuid}": {
+      "get": {
+        "tags": ["location-controller"],
+        "operationId": "getLocation",
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Response"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["location-controller"],
+        "operationId": "updateLocation",
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LocationDTO"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Response"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["location-controller"],
+        "operationId": "deleteLocation",
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/v1/doctor/{uuid}": {
+      "put": {
+        "tags": ["doctor-controller"],
+        "operationId": "updateDoctor",
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DoctorDTO"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Response"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["doctor-controller"],
+        "operationId": "deleteDoctor",
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/v1/allergy/{uuid}": {
+      "get": {
+        "tags": ["allergy-controller"],
+        "operationId": "getByUuid",
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Response"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["allergy-controller"],
+        "operationId": "update",
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AllergyRequestDTO"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Response"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["allergy-controller"],
+        "operationId": "delete",
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Response"
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/api/v1/admin/profile": {
@@ -74,7 +409,11 @@
           "200": {
             "description": "OK",
             "content": {
-              "*/*": { "schema": { "$ref": "#/components/schemas/Response" } }
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Response"
+                }
+              }
             }
           }
         }
@@ -96,28 +435,74 @@
           "200": {
             "description": "OK",
             "content": {
-              "*/*": { "schema": { "$ref": "#/components/schemas/Response" } }
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Response"
+                }
+              }
             }
           }
         }
       }
     },
-    "/api/v1/test/email": {
-      "post": {
-        "tags": ["email-test-controller"],
-        "operationId": "testEmail",
+    "/api/v1/tax": {
+      "get": {
+        "tags": ["tax-controller"],
+        "operationId": "getAllTaxes",
         "parameters": [
           {
-            "name": "email",
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "pageable",
             "in": "query",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "$ref": "#/components/schemas/Pageable"
+            }
           }
         ],
         "responses": {
           "200": {
             "description": "OK",
-            "content": { "*/*": { "schema": { "type": "string" } } }
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Response"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["tax-controller"],
+        "operationId": "createTax",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TaxDTO"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Response"
+                }
+              }
+            }
           }
         }
       }
@@ -140,7 +525,11 @@
           "200": {
             "description": "OK",
             "content": {
-              "*/*": { "schema": { "$ref": "#/components/schemas/Response" } }
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Response"
+                }
+              }
             }
           }
         }
@@ -153,7 +542,9 @@
         "requestBody": {
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/RegisterPatient" }
+              "schema": {
+                "$ref": "#/components/schemas/RegisterPatient"
+              }
             }
           },
           "required": true
@@ -162,33 +553,151 @@
           "200": {
             "description": "OK",
             "content": {
-              "*/*": { "schema": { "$ref": "#/components/schemas/PatientDTO" } }
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Response"
+                }
+              }
             }
           }
         }
       }
     },
-    "/api/v1/auth/set-password/{patientId}": {
-      "post": {
-        "tags": ["auth-controller"],
-        "operationId": "setPassword",
+    "/api/v1/location": {
+      "get": {
+        "tags": ["location-controller"],
+        "operationId": "getAllLocations",
         "parameters": [
           {
-            "name": "patientId",
-            "in": "path",
-            "required": true,
-            "schema": { "type": "integer", "format": "int64" }
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Zero-based page index (0..N)",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 0,
+              "minimum": 0
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "description": "The size of the page to be returned",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 20,
+              "minimum": 1
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported.",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
           }
         ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Response"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["location-controller"],
+        "operationId": "createLocation",
         "requestBody": {
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/SetPasswordDTO" }
+              "schema": {
+                "$ref": "#/components/schemas/LocationDTO"
+              }
             }
           },
           "required": true
         },
-        "responses": { "200": { "description": "OK" } }
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Response"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/doctor/register": {
+      "post": {
+        "tags": ["doctor-controller"],
+        "operationId": "registerNewDoctor",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterDoctor"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Response"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/set-password": {
+      "post": {
+        "tags": ["auth-controller"],
+        "operationId": "setPassword",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SetPasswordRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
       }
     },
     "/api/v1/auth/reset-password": {
@@ -198,7 +707,9 @@
         "requestBody": {
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/ResetPasswordRequest" }
+              "schema": {
+                "$ref": "#/components/schemas/ResetPasswordRequest"
+              }
             }
           },
           "required": true
@@ -221,23 +732,23 @@
       "post": {
         "tags": ["auth-controller"],
         "operationId": "refresh",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/RefreshTokenRequestDTO"
-              }
+        "parameters": [
+          {
+            "name": "__Host-refresh_token",
+            "in": "cookie",
+            "required": true,
+            "schema": {
+              "type": "string"
             }
-          },
-          "required": true
-        },
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK",
             "content": {
               "*/*": {
                 "schema": {
-                  "$ref": "#/components/schemas/RefreshTokenResponseDTO"
+                  "$ref": "#/components/schemas/Response"
                 }
               }
             }
@@ -249,22 +760,19 @@
       "post": {
         "tags": ["auth-controller"],
         "operationId": "logout",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": { "$ref": "#/components/schemas/LogoutRequest" }
+        "parameters": [
+          {
+            "name": "__Host-refresh_token",
+            "in": "cookie",
+            "required": true,
+            "schema": {
+              "type": "string"
             }
-          },
-          "required": true
-        },
+          }
+        ],
         "responses": {
           "200": {
-            "description": "OK",
-            "content": {
-              "*/*": {
-                "schema": { "$ref": "#/components/schemas/LogoutResponse" }
-              }
-            }
+            "description": "OK"
           }
         }
       }
@@ -276,7 +784,9 @@
         "requestBody": {
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/LoginDTO" }
+              "schema": {
+                "$ref": "#/components/schemas/LoginDTO"
+              }
             }
           },
           "required": true
@@ -286,7 +796,9 @@
             "description": "OK",
             "content": {
               "*/*": {
-                "schema": { "$ref": "#/components/schemas/LoginResponseDTO" }
+                "schema": {
+                  "$ref": "#/components/schemas/Response"
+                }
               }
             }
           }
@@ -300,7 +812,9 @@
         "requestBody": {
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/ForgotPasswordRequest" }
+              "schema": {
+                "$ref": "#/components/schemas/ForgotPasswordRequest"
+              }
             }
           },
           "required": true
@@ -326,7 +840,9 @@
         "requestBody": {
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/AppointmentRequestDTO" }
+              "schema": {
+                "$ref": "#/components/schemas/AppointmentRequestDTO"
+              }
             }
           },
           "required": true
@@ -335,32 +851,26 @@
           "200": {
             "description": "OK",
             "content": {
-              "*/*": { "schema": { "$ref": "#/components/schemas/Response" } }
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Response"
+                }
+              }
             }
           }
         }
       }
     },
-    "/api/v1/patient/me": {
-      "get": {
-        "tags": ["patient-controller"],
-        "operationId": "getMyProfile",
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "*/*": { "schema": { "$ref": "#/components/schemas/PatientDTO" } }
-            }
-          }
-        }
-      },
-      "patch": {
-        "tags": ["patient-controller"],
-        "operationId": "updatePatient",
+    "/api/v1/allergy": {
+      "post": {
+        "tags": ["allergy-controller"],
+        "operationId": "create",
         "requestBody": {
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/PatientDTO" }
+              "schema": {
+                "$ref": "#/components/schemas/AllergyRequestDTO"
+              }
             }
           },
           "required": true
@@ -369,7 +879,11 @@
           "200": {
             "description": "OK",
             "content": {
-              "*/*": { "schema": { "$ref": "#/components/schemas/PatientDTO" } }
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Response"
+                }
+              }
             }
           }
         }
@@ -383,7 +897,11 @@
           "200": {
             "description": "OK",
             "content": {
-              "*/*": { "schema": { "$ref": "#/components/schemas/Response" } }
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Response"
+                }
+              }
             }
           }
         }
@@ -405,7 +923,11 @@
           "200": {
             "description": "OK",
             "content": {
-              "*/*": { "schema": { "$ref": "#/components/schemas/Response" } }
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Response"
+                }
+              }
             }
           }
         }
@@ -418,7 +940,9 @@
         "requestBody": {
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/ChangePasswordRequest" }
+              "schema": {
+                "$ref": "#/components/schemas/ChangePasswordRequest"
+              }
             }
           },
           "required": true
@@ -437,6 +961,53 @@
         }
       }
     },
+    "/api/v1/appointment/{uuid}/status": {
+      "patch": {
+        "tags": ["appointment-controller"],
+        "operationId": "updateAppointmentStatus",
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "SCHEDULED",
+                "COMPLETED",
+                "PENDING",
+                "CHECK_IN",
+                "CANCELLED",
+                "NO_SHOW",
+                "RESCHEDULED",
+                "CLOSED"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Response"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/prescription/{uuid}": {
       "get": {
         "tags": ["prescription-controller"],
@@ -446,14 +1017,21 @@
             "name": "uuid",
             "in": "path",
             "required": true,
-            "schema": { "type": "string", "format": "uuid" }
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
           }
         ],
         "responses": {
           "200": {
             "description": "OK",
             "content": {
-              "*/*": { "schema": { "$ref": "#/components/schemas/Response" } }
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Response"
+                }
+              }
             }
           }
         }
@@ -468,14 +1046,21 @@
             "name": "appointmentUuid",
             "in": "path",
             "required": true,
-            "schema": { "type": "string", "format": "uuid" }
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
           }
         ],
         "responses": {
           "200": {
             "description": "OK",
             "content": {
-              "*/*": { "schema": { "$ref": "#/components/schemas/Response" } }
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Response"
+                }
+              }
             }
           }
         }
@@ -484,12 +1069,69 @@
     "/api/v1/patient/patients": {
       "get": {
         "tags": ["patient-controller"],
-        "operationId": "get",
+        "operationId": "getAllPatients",
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "gender",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "age",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pageable",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Pageable"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK",
             "content": {
-              "*/*": { "schema": { "$ref": "#/components/schemas/Response" } }
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Response"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/patient/me": {
+      "get": {
+        "tags": ["patient-controller"],
+        "operationId": "getMyProfile",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/PatientDTO"
+                }
+              }
             }
           }
         }
@@ -504,7 +1146,9 @@
             "description": "OK",
             "content": {
               "*/*": {
-                "schema": { "$ref": "#/components/schemas/PatientDashboardDTO" }
+                "schema": {
+                  "$ref": "#/components/schemas/PatientDashboardDTO"
+                }
               }
             }
           }
@@ -515,11 +1159,49 @@
       "get": {
         "tags": ["doctor-controller"],
         "operationId": "getAllDoctors",
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "specialization",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "isActive",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "pageable",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Pageable"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK",
             "content": {
-              "*/*": { "schema": { "$ref": "#/components/schemas/Response" } }
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Response"
+                }
+              }
             }
           }
         }
@@ -533,7 +1215,11 @@
           "200": {
             "description": "OK",
             "content": {
-              "*/*": { "schema": { "$ref": "#/components/schemas/Response" } }
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Response"
+                }
+              }
             }
           }
         }
@@ -545,32 +1231,120 @@
         "operationId": "getPatientAppointments",
         "parameters": [
           {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "SCHEDULED",
+                "COMPLETED",
+                "PENDING",
+                "CHECK_IN",
+                "CANCELLED",
+                "NO_SHOW",
+                "RESCHEDULED",
+                "CLOSED"
+              ]
+            }
+          },
+          {
+            "name": "patientUuid",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "doctorUuid",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "locationUuid",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "fromDate",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "toDate",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
             "name": "page",
             "in": "query",
             "description": "Zero-based page index (0..N)",
             "required": false,
-            "schema": { "type": "integer", "default": 0, "minimum": 0 }
+            "schema": {
+              "type": "integer",
+              "default": 0,
+              "minimum": 0
+            }
           },
           {
             "name": "size",
             "in": "query",
             "description": "The size of the page to be returned",
             "required": false,
-            "schema": { "type": "integer", "default": 20, "minimum": 1 }
+            "schema": {
+              "type": "integer",
+              "default": 20,
+              "minimum": 1
+            }
           },
           {
             "name": "sort",
             "in": "query",
             "description": "Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported.",
             "required": false,
-            "schema": { "type": "array", "items": { "type": "string" } }
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
           }
         ],
         "responses": {
           "200": {
             "description": "OK",
             "content": {
-              "*/*": { "schema": { "$ref": "#/components/schemas/Response" } }
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Response"
+                }
+              }
             }
           }
         }
@@ -582,32 +1356,214 @@
         "operationId": "getDoctorAppointments",
         "parameters": [
           {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "SCHEDULED",
+                "COMPLETED",
+                "PENDING",
+                "CHECK_IN",
+                "CANCELLED",
+                "NO_SHOW",
+                "RESCHEDULED",
+                "CLOSED"
+              ]
+            }
+          },
+          {
+            "name": "patientUuid",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "doctorUuid",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "locationUuid",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "fromDate",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "toDate",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
             "name": "page",
             "in": "query",
             "description": "Zero-based page index (0..N)",
             "required": false,
-            "schema": { "type": "integer", "default": 0, "minimum": 0 }
+            "schema": {
+              "type": "integer",
+              "default": 0,
+              "minimum": 0
+            }
           },
           {
             "name": "size",
             "in": "query",
             "description": "The size of the page to be returned",
             "required": false,
-            "schema": { "type": "integer", "default": 20, "minimum": 1 }
+            "schema": {
+              "type": "integer",
+              "default": 20,
+              "minimum": 1
+            }
           },
           {
             "name": "sort",
             "in": "query",
             "description": "Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported.",
             "required": false,
-            "schema": { "type": "array", "items": { "type": "string" } }
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
           }
         ],
         "responses": {
           "200": {
             "description": "OK",
             "content": {
-              "*/*": { "schema": { "$ref": "#/components/schemas/Response" } }
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Response"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/appointment/doctor/calendar/{uuid}": {
+      "get": {
+        "tags": ["appointment-controller"],
+        "operationId": "getDoctorCalendar",
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "start",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "end",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Response"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/appointment/available-slots": {
+      "get": {
+        "tags": ["appointment-controller"],
+        "operationId": "getAvailableSlots",
+        "parameters": [
+          {
+            "name": "doctorUuid",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "locationUuid",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "date",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Response"
+                }
+              }
             }
           }
         }
@@ -619,32 +1575,201 @@
         "operationId": "getAllAppointments",
         "parameters": [
           {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "SCHEDULED",
+                "COMPLETED",
+                "PENDING",
+                "CHECK_IN",
+                "CANCELLED",
+                "NO_SHOW",
+                "RESCHEDULED",
+                "CLOSED"
+              ]
+            }
+          },
+          {
+            "name": "patientUuid",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "doctorUuid",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "locationUuid",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "fromDate",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "toDate",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
             "name": "page",
             "in": "query",
             "description": "Zero-based page index (0..N)",
             "required": false,
-            "schema": { "type": "integer", "default": 0, "minimum": 0 }
+            "schema": {
+              "type": "integer",
+              "default": 0,
+              "minimum": 0
+            }
           },
           {
             "name": "size",
             "in": "query",
             "description": "The size of the page to be returned",
             "required": false,
-            "schema": { "type": "integer", "default": 20, "minimum": 1 }
+            "schema": {
+              "type": "integer",
+              "default": 20,
+              "minimum": 1
+            }
           },
           {
             "name": "sort",
             "in": "query",
             "description": "Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported.",
             "required": false,
-            "schema": { "type": "array", "items": { "type": "string" } }
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
           }
         ],
         "responses": {
           "200": {
             "description": "OK",
             "content": {
-              "*/*": { "schema": { "$ref": "#/components/schemas/Response" } }
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Response"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/allergy/patient/{patientUuid}": {
+      "get": {
+        "tags": ["allergy-controller"],
+        "operationId": "getByPatient",
+        "parameters": [
+          {
+            "name": "patientUuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Zero-based page index (0..N)",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 0,
+              "minimum": 0
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "description": "The size of the page to be returned",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 20,
+              "minimum": 1
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported.",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Response"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/dashboard": {
+      "get": {
+        "tags": ["admin-controller"],
+        "operationId": "getDashboard_1",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Response"
+                }
+              }
             }
           }
         }
@@ -653,24 +1778,59 @@
   },
   "components": {
     "schemas": {
-      "PatientDTO": {
+      "AddressDTO": {
         "type": "object",
         "properties": {
-          "uuid": { "type": "string", "format": "uuid" },
-          "fullName": { "type": "string" },
-          "age": { "type": "integer", "format": "int32" },
-          "gender": { "type": "string" },
-          "phoneNumber": { "type": "string" },
-          "email": { "type": "string" }
-        }
-      },
-      "AdminProfileUpdateRequestDTO": {
-        "type": "object",
-        "properties": {
-          "fullName": { "type": "string" },
-          "email": { "type": "string" }
+          "uuid": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "line1": {
+            "type": "string"
+          },
+          "line2": {
+            "type": "string"
+          },
+          "city": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "country": {
+            "type": "string"
+          },
+          "zipcode": {
+            "type": "string"
+          }
         },
-        "required": ["email", "fullName"]
+        "required": ["city", "country", "line1", "state", "zipcode"]
+      },
+      "TaxDTO": {
+        "type": "object",
+        "properties": {
+          "uuid": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "taxId": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["EIN", "SSN", "ITIN", "OTHER"]
+          },
+          "npi": {
+            "type": "string"
+          },
+          "billingAddress": {
+            "$ref": "#/components/schemas/AddressDTO"
+          }
+        },
+        "required": ["name", "taxId", "type"]
       },
       "Response": {
         "type": "object",
@@ -709,19 +1869,170 @@
               "CONFLICT"
             ]
           },
-          "data": { "type": "object" },
-          "message": { "type": "string" }
+          "data": {
+            "type": "object"
+          },
+          "message": {
+            "type": "string"
+          }
         }
+      },
+      "PatientDTO": {
+        "type": "object",
+        "properties": {
+          "uuid": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "fullName": {
+            "type": "string"
+          },
+          "age": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "gender": {
+            "type": "string"
+          },
+          "phoneNumber": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "isActive": {
+            "type": "boolean"
+          }
+        }
+      },
+      "LocationDTO": {
+        "type": "object",
+        "properties": {
+          "uuid": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "code": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "npi": {
+            "type": "string"
+          },
+          "billingAddress": {
+            "$ref": "#/components/schemas/AddressDTO"
+          },
+          "taxEntity": {
+            "$ref": "#/components/schemas/TaxDTO"
+          }
+        },
+        "required": ["code", "name"]
+      },
+      "DoctorDTO": {
+        "type": "object",
+        "properties": {
+          "uuid": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "fullName": {
+            "type": "string"
+          },
+          "specialization": {
+            "type": "string"
+          },
+          "phoneNumber": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "consultationFee": {
+            "type": "number"
+          },
+          "isActive": {
+            "type": "boolean"
+          }
+        }
+      },
+      "AllergyRequestDTO": {
+        "type": "object",
+        "properties": {
+          "patientUuid": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "allergen": {
+            "type": "string"
+          },
+          "reaction": {
+            "type": "string"
+          },
+          "severity": {
+            "type": "string"
+          },
+          "onsetDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "source": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "notes": {
+            "type": "string"
+          }
+        },
+        "required": ["name", "patientUuid"]
+      },
+      "AdminProfileUpdateRequestDTO": {
+        "type": "object",
+        "properties": {
+          "fullName": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          }
+        },
+        "required": ["email", "fullName"]
       },
       "PrescriptionRequestDTO": {
         "type": "object",
         "properties": {
-          "medicineName": { "type": "string" },
-          "dosage": { "type": "string" },
-          "frequency": { "type": "string" },
-          "duration": { "type": "integer", "format": "int32" },
-          "instructions": { "type": "string" },
-          "appointmentUuid": { "type": "string", "format": "uuid" }
+          "medicineName": {
+            "type": "string"
+          },
+          "dosage": {
+            "type": "string"
+          },
+          "frequency": {
+            "type": "string"
+          },
+          "duration": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "instructions": {
+            "type": "string"
+          },
+          "appointmentUuid": {
+            "type": "string",
+            "format": "uuid"
+          }
         },
         "required": [
           "appointmentUuid",
@@ -734,14 +2045,25 @@
       "RegisterPatient": {
         "type": "object",
         "properties": {
-          "username": { "type": "string" },
-          "password": { "type": "string" },
-          "firstName": { "type": "string" },
-          "lastName": { "type": "string" },
-          "age": { "type": "integer", "format": "int32" },
-          "gender": { "type": "string" },
-          "phoneNumber": { "type": "string" },
-          "email": { "type": "string" }
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "age": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "gender": {
+            "type": "string"
+          },
+          "phoneNumber": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          }
         },
         "required": [
           "age",
@@ -749,130 +2071,169 @@
           "firstName",
           "gender",
           "lastName",
-          "password",
-          "phoneNumber",
-          "username"
+          "phoneNumber"
         ]
       },
-      "SetPasswordDTO": {
+      "RegisterDoctor": {
         "type": "object",
-        "properties": { "newPassword": { "type": "string" } },
-        "required": ["newPassword"]
+        "properties": {
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "specialization": {
+            "type": "string"
+          },
+          "phoneNumber": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "consultationFee": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "consultationFee",
+          "email",
+          "firstName",
+          "lastName",
+          "phoneNumber",
+          "specialization"
+        ]
+      },
+      "SetPasswordRequest": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string"
+          },
+          "newPassword": {
+            "type": "string"
+          }
+        },
+        "required": ["newPassword", "token"]
       },
       "ResetPasswordRequest": {
         "type": "object",
         "properties": {
-          "token": { "type": "string" },
-          "newPassword": { "type": "string", "maxLength": 128, "minLength": 8 }
+          "token": {
+            "type": "string"
+          },
+          "newPassword": {
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 8
+          }
         },
         "required": ["newPassword", "token"]
       },
       "ResetPasswordResponse": {
         "type": "object",
         "properties": {
-          "success": { "type": "boolean" },
-          "message": { "type": "string" }
-        }
-      },
-      "RefreshTokenRequestDTO": {
-        "type": "object",
-        "properties": { "refreshToken": { "type": "string" } },
-        "required": ["refreshToken"]
-      },
-      "RefreshTokenResponseDTO": {
-        "type": "object",
-        "properties": {
-          "success": { "type": "boolean" },
-          "access_token": { "type": "string" },
-          "refresh_token": { "type": "string" },
-          "expires_in": { "type": "integer", "format": "int64" },
-          "token_type": { "type": "string" }
-        }
-      },
-      "LogoutRequest": {
-        "type": "object",
-        "properties": { "refreshToken": { "type": "string" } },
-        "required": ["refreshToken"]
-      },
-      "LogoutResponse": {
-        "type": "object",
-        "properties": {
-          "success": { "type": "boolean" },
-          "message": { "type": "string" }
+          "success": {
+            "type": "boolean"
+          },
+          "message": {
+            "type": "string"
+          }
         }
       },
       "LoginDTO": {
         "type": "object",
         "properties": {
-          "username": { "type": "string" },
-          "password": { "type": "string" }
+          "username": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          }
         },
         "required": ["password", "username"]
       },
-      "LoginResponseDTO": {
-        "type": "object",
-        "properties": {
-          "access_token": { "type": "string" },
-          "refresh_token": { "type": "string" },
-          "expires_in": { "type": "integer", "format": "int64" }
-        }
-      },
       "ForgotPasswordRequest": {
         "type": "object",
-        "properties": { "username": { "type": "string" } },
+        "properties": {
+          "username": {
+            "type": "string"
+          }
+        },
         "required": ["username"]
       },
       "ForgotPasswordResponse": {
         "type": "object",
         "properties": {
-          "success": { "type": "boolean" },
-          "message": { "type": "string" }
+          "success": {
+            "type": "boolean"
+          },
+          "message": {
+            "type": "string"
+          }
         }
       },
       "AppointmentRequestDTO": {
         "type": "object",
         "properties": {
-          "appointmentDate": { "type": "string", "format": "date-time" },
-          "reasonForVisit": { "type": "string" },
-          "status": {
+          "appointmentDate": {
             "type": "string",
-            "enum": [
-              "SCHEDULED",
-              "COMPLETED",
-              "PENDING",
-              "CHECK_IN",
-              "CANCELLED",
-              "NO_SHOW",
-              "RESCHEDULED",
-              "CLOSED"
-            ]
+            "format": "date-time"
           },
-          "patientUuid": { "type": "string", "format": "uuid" },
-          "doctorUuid": { "type": "string", "format": "uuid" }
+          "reasonForVisit": {
+            "type": "string"
+          },
+          "patientUuid": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "doctorUuid": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "locationUuid": {
+            "type": "string",
+            "format": "uuid"
+          }
         },
         "required": [
           "appointmentDate",
           "doctorUuid",
+          "locationUuid",
           "patientUuid",
-          "reasonForVisit",
-          "status"
+          "reasonForVisit"
         ]
       },
       "DoctorProfileUpdateRequestDTO": {
         "type": "object",
         "properties": {
-          "fullName": { "type": "string" },
-          "specialization": { "type": "string" },
-          "phoneNumber": { "type": "string", "pattern": "^[0-9]{10}$" },
-          "email": { "type": "string" },
-          "consultationFee": { "type": "number", "minimum": 0.0 }
+          "fullName": {
+            "type": "string"
+          },
+          "specialization": {
+            "type": "string"
+          },
+          "phoneNumber": {
+            "type": "string",
+            "pattern": "^[0-9]{10}$"
+          },
+          "email": {
+            "type": "string"
+          },
+          "consultationFee": {
+            "type": "number",
+            "minimum": 0
+          }
         },
         "required": ["email", "fullName", "phoneNumber", "specialization"]
       },
       "ChangePasswordRequest": {
         "type": "object",
         "properties": {
-          "currentPassword": { "type": "string" },
+          "currentPassword": {
+            "type": "string"
+          },
           "newPassword": {
             "type": "string",
             "maxLength": 2147483647,
@@ -884,56 +2245,122 @@
       "ChangePasswordResponseDTO": {
         "type": "object",
         "properties": {
-          "success": { "type": "boolean" },
-          "message": { "type": "string" }
+          "success": {
+            "type": "boolean"
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      },
+      "Pageable": {
+        "type": "object",
+        "properties": {
+          "page": {
+            "type": "integer",
+            "format": "int32",
+            "minimum": 0
+          },
+          "size": {
+            "type": "integer",
+            "format": "int32",
+            "minimum": 1
+          },
+          "sort": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
         }
       },
       "AppointmentSummary": {
         "type": "object",
         "properties": {
-          "upcoming": { "type": "integer", "format": "int64" },
-          "completed": { "type": "integer", "format": "int64" }
+          "upcoming": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "completed": {
+            "type": "integer",
+            "format": "int64"
+          }
         }
       },
       "LabReportSummary": {
         "type": "object",
-        "properties": { "available": { "type": "integer", "format": "int64" } }
+        "properties": {
+          "available": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
       },
       "MedicalRecordSummary": {
         "type": "object",
-        "properties": { "total": { "type": "integer", "format": "int64" } }
+        "properties": {
+          "total": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
       },
       "NextAppointment": {
         "type": "object",
         "properties": {
-          "date": { "type": "string" },
-          "time": { "type": "string" },
-          "doctorName": { "type": "string" },
-          "specialization": { "type": "string" }
+          "date": {
+            "type": "string"
+          },
+          "time": {
+            "type": "string"
+          },
+          "doctorName": {
+            "type": "string"
+          },
+          "specialization": {
+            "type": "string"
+          }
         }
       },
       "PatientDashboardDTO": {
         "type": "object",
         "properties": {
-          "patient": { "$ref": "#/components/schemas/PatientSummary" },
-          "appointments": { "$ref": "#/components/schemas/AppointmentSummary" },
+          "patient": {
+            "$ref": "#/components/schemas/PatientSummary"
+          },
+          "appointments": {
+            "$ref": "#/components/schemas/AppointmentSummary"
+          },
           "prescriptions": {
             "$ref": "#/components/schemas/PrescriptionSummary"
           },
           "medicalRecords": {
             "$ref": "#/components/schemas/MedicalRecordSummary"
           },
-          "labReports": { "$ref": "#/components/schemas/LabReportSummary" },
-          "nextAppointment": { "$ref": "#/components/schemas/NextAppointment" }
+          "labReports": {
+            "$ref": "#/components/schemas/LabReportSummary"
+          },
+          "nextAppointment": {
+            "$ref": "#/components/schemas/NextAppointment"
+          }
         }
       },
       "PatientSummary": {
         "type": "object",
-        "properties": { "fullName": { "type": "string" } }
+        "properties": {
+          "fullName": {
+            "type": "string"
+          }
+        }
       },
       "PrescriptionSummary": {
         "type": "object",
-        "properties": { "active": { "type": "integer", "format": "int64" } }
+        "properties": {
+          "active": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
       }
     }
   }

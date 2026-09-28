@@ -5,9 +5,3 @@ export interface DoctorDashboard {
   totalAppointments: number;
   totalPatients: number;
 }
-
-export interface DoctorDashboardResponse {
-  code: string;
-  data: DoctorDashboard;
-  message: string;
-}

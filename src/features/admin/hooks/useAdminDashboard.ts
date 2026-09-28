@@ -1,21 +1,16 @@
-import { useQuery } from '@tanstack/react-query';
+import { useGetAdminDashboard } from '../../../sdk/generated/admin/admin';
 
-import {
-  adminKeys,
-} from '../constants/queryKeys';
-
-import {
-  adminDashboardService,
-} from '../services/adminDashboardService';
+import type {
+  AdminDashboard,
+} from '../types/adminDashboard';
 
 export function useAdminDashboard() {
-  return useQuery({
-    queryKey:
-      adminKeys.dashboard(),
+  return useGetAdminDashboard({
+    query: {
+      select: (response) =>
+        response.data as unknown as AdminDashboard,
 
-    queryFn: () =>
-      adminDashboardService.getDashboard(),
-
-    staleTime: 30_000,
+      staleTime: 30_000,
+    },
   });
 }

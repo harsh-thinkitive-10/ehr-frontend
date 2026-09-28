@@ -1,42 +1,47 @@
-import {
-  keepPreviousData,
-  useQuery,
-} from '@tanstack/react-query';
+import { keepPreviousData } from '@tanstack/react-query';
 
-import { patientService } from '../services/patientService';
+import {
+  getGetAllPatientsQueryKey,
+  useGetAllPatients,
+} from '../../../sdk/generated/patient/patient';
+import type { GetAllPatientsParams } from '../../../sdk/generated/common/types';
 
 import type {
   PatientListParams,
+  PatientListResponse,
 } from '../types/patient';
 
 export const patientKeys = {
-  all: ['patients'] as const,
-
-  list: (
-    params: PatientListParams,
-  ) =>
-    [
-      ...patientKeys.all,
-      'list',
-      params,
-    ] as const,
+  all: getGetAllPatientsQueryKey(),
 };
+
+function toQueryParams(
+  params: PatientListParams,
+): GetAllPatientsParams {
+  const search = params.search?.trim();
+
+  return {
+    page: params.page ?? 0,
+    size: params.size ?? 10,
+    ...(search ? { search } : {}),
+    ...(params.gender ? { gender: params.gender } : {}),
+    ...(params.age !== undefined ? { age: params.age } : {}),
+    ...(params.sort ? { sort: [params.sort] } : {}),
+  };
+}
 
 export function usePatients(
   params: PatientListParams = {},
 ) {
-  return useQuery({
-    queryKey:
-      patientKeys.list(params),
+  return useGetAllPatients(toQueryParams(params), {
+    query: {
+      select: (response) =>
+        response as unknown as PatientListResponse,
 
-    queryFn: () =>
-      patientService.getPatients(
-        params,
-      ),
+      placeholderData:
+        keepPreviousData,
 
-    placeholderData:
-      keepPreviousData,
-
-    staleTime: 30 * 1000,
+      staleTime: 30 * 1000,
+    },
   });
 }

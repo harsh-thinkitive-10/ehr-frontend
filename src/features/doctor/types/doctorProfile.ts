@@ -6,9 +6,3 @@ export interface DoctorProfile {
   email: string;
   consultationFee: number;
 }
-
-export interface DoctorProfileResponse {
-  code: string;
-  data: DoctorProfile;
-  message: string;
-}

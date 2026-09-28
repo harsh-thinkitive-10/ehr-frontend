@@ -1,15 +1,26 @@
-import { keepPreviousData, useQuery } from '@tanstack/react-query';
-import { locationService, type LocationListParams } from '../services/locationService';
+import { keepPreviousData } from '@tanstack/react-query';
+
+import {
+  getGetAllLocationsQueryKey,
+  useGetAllLocations,
+} from '../../../sdk/generated/location/location';
+
+import type { LocationListResponse } from '../types/location';
+
+export interface LocationListParams {
+  page: number;
+  size: number;
+}
 
 export const locationKeys = {
-  all: ['locations'] as const,
-  list: (page: number, size: number) => [...locationKeys.all, 'list', page, size] as const,
+  all: getGetAllLocationsQueryKey(),
 };
 
 export function useLocations(params: LocationListParams) {
-  return useQuery({
-    queryKey: locationKeys.list(params.page, params.size),
-    queryFn: () => locationService.getLocations(params),
-    placeholderData: keepPreviousData,
+  return useGetAllLocations(params, {
+    query: {
+      select: (response) => response as unknown as LocationListResponse,
+      placeholderData: keepPreviousData,
+    },
   });
 }

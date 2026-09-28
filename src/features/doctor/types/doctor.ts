@@ -25,32 +25,3 @@ export interface DoctorListResponse {
   data: DoctorPage;
   message: string;
 }
-
-export interface RegisterDoctorRequest {
-  firstName: string;
-  lastName: string;
-  specialization: string;
-  phoneNumber: string;
-  email: string;
-  consultationFee: number;
-}
-
-export interface RegisterDoctorResponse {
-  code: string;
-  data: Doctor;
-  message: string;
-}
-
-export interface UpdateDoctorRequest {
-  fullName: string;
-  specialization: string;
-  phoneNumber: string;
-  email: string;
-  consultationFee: number;
-}
-
-export interface UpdateDoctorResponse {
-  code: string;
-  data: Doctor;
-  message: string;
-}

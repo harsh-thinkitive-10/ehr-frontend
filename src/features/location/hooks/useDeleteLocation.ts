@@ -1,8 +1,9 @@
 import { useMutation } from '@tanstack/react-query';
-import { locationService } from '../services/locationService';
+
+import { deleteLocation } from '../../../sdk/generated/location/location';
 
 export function useDeleteLocation() {
   return useMutation({
-    mutationFn: (uuid: string) => locationService.deleteLocation(uuid),
+    mutationFn: (uuid: string) => deleteLocation(uuid),
   });
 }

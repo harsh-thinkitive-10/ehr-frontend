@@ -1,14 +1,14 @@
 import { useMutation } from '@tanstack/react-query';
 
-import {
-  authService,
-  type ChangePasswordRequest,
-} from '../services/authService';
+import { changePassword } from '../../../sdk/generated/auth/auth';
+import type { ChangePasswordRequest } from '../../../sdk/generated/common/types';
 
 export function useChangePassword() {
   return useMutation({
-    mutationFn: (
+    mutationFn: async (
       data: ChangePasswordRequest,
-    ) => authService.changePassword(data),
+    ) => {
+      await changePassword(data);
+    },
   });
 }

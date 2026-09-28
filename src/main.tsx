@@ -1,5 +1,3 @@
-import "./sdk/setup";
-
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { RouterProvider } from "react-router-dom";
@@ -11,7 +9,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 
 import { router } from "./app/router";
 import { AuthProvider } from "./features/auth/context";
-import { queryClient } from "./app/queryClient";
+import { queryClient } from "./sdk/queryClient";
 import { theme } from "./app/theme";
 
 import "./index.css";

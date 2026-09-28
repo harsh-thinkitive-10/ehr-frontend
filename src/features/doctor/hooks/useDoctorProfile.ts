@@ -1,13 +1,12 @@
-import { useQuery } from '@tanstack/react-query';
-import { doctorProfileService } from '../services/doctorProfileService';
+import { useGetDoctorProfile } from '../../../sdk/generated/doctor/doctor';
 
-export const doctorProfileKeys = {
-  all: ['doctor-profile'] as const,
-};
+import type { DoctorProfile } from '../types/doctorProfile';
 
 export function useDoctorProfile() {
-  return useQuery({
-    queryKey: doctorProfileKeys.all,
-    queryFn: doctorProfileService.getProfile,
+  return useGetDoctorProfile({
+    query: {
+      select: (response) =>
+        response.data as unknown as DoctorProfile,
+    },
   });
 }

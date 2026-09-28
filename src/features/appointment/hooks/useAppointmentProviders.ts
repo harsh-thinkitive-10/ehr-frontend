@@ -1,15 +1,13 @@
-import { useQuery } from '@tanstack/react-query';
-import { appointmentService } from '../services/appointmentService';
+import { useGetAllDoctors } from '../../../sdk/generated/doctor/doctor';
 
-export const appointmentProviderKeys = {
-  all: ['appointment-providers'] as const,
-  list: () => [...appointmentProviderKeys.all, 'list'] as const,
-};
+import type { AppointmentProvider } from '../types/appointmentProvider';
 
 export function useAppointmentProviders() {
-  return useQuery({
-    queryKey: appointmentProviderKeys.list(),
-    queryFn: () => appointmentService.getProviders(),
-    staleTime: 5 * 60 * 1000,
+  return useGetAllDoctors(undefined, {
+    query: {
+      select: (response) =>
+        (response.data as unknown as { content: AppointmentProvider[] }).content,
+      staleTime: 5 * 60 * 1000,
+    },
   });
 }

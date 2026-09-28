@@ -1,26 +1,29 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import type { Role } from '../constant/roles';
-import { tokenService } from '../services/tokenService';
-import { authService, type LoginResponse } from '../services/authService';
+import { clearAccessToken, getAccessToken, setAccessToken as storeAccessToken } from '../../../sdk/accessToken';
+import { refreshSession, type AuthTokenData } from '../../../sdk/refreshSession';
+import { setSessionExpiredHandler } from '../../../sdk/session';
+import { logout as logoutRequest } from '../../../sdk/generated/auth/auth';
+import type { Response } from '../../../sdk/generated/common/types';
 import { getRolesFromToken, getUserFromToken, type AuthUser } from '../util/jwt';
 import { AuthContext } from './context';
-import { queryClient } from '../../../app/queryClient';
+import { queryClient } from '../../../sdk/queryClient';
 
 interface AuthProviderProps {
   children: ReactNode;
 }
 
 export function AuthProvider({ children }: AuthProviderProps) {
-  const [accessToken, setAccessToken] = useState<string | null>(tokenService.getAccessToken());
+  const [accessToken, setAccessToken] = useState<string | null>(getAccessToken());
   const [roles, setRoles] = useState<Role[]>([]);
   const [user, setUser] = useState<AuthUser | null>(null);
   const [isInitializing, setIsInitializing] = useState(true);
   const initialized = useRef(false);
 
   useEffect(() => {
-    tokenService.setSessionExpiredHandler(() => {
+    setSessionExpiredHandler(() => {
       queryClient.clear();
-      tokenService.clearTokens();
+      clearAccessToken();
       setAccessToken(null);
       setRoles([]);
       setUser(null);
@@ -34,20 +37,17 @@ export function AuthProvider({ children }: AuthProviderProps) {
       try {
         console.log('AUTH: restoring session');
 
-        const response = await authService.refresh();
+        const newAccessToken = await refreshSession();
 
         console.log('AUTH: refresh success');
 
-        const newAccessToken = response.data.access_token;
-
-        tokenService.setAccessToken(newAccessToken);
         setAccessToken(newAccessToken);
         setRoles(getRolesFromToken(newAccessToken));
         setUser(getUserFromToken(newAccessToken));
       } catch (error) {
         console.error('AUTH: refresh failed', error);
 
-        tokenService.clearTokens();
+        clearAccessToken();
         setAccessToken(null);
         setRoles([]);
         setUser(null);
@@ -59,14 +59,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
     restoreSession();
 
     return () => {
-      tokenService.setSessionExpiredHandler(null);
+      setSessionExpiredHandler(null);
     };
   }, []);
 
-  const login = (response: LoginResponse) => {
-    const newAccessToken = response.data.access_token;
+  const login = (response: Response) => {
+    const newAccessToken = (response.data as unknown as AuthTokenData).access_token;
 
-    tokenService.setAccessToken(newAccessToken);
+    storeAccessToken(newAccessToken);
     setAccessToken(newAccessToken);
     setRoles(getRolesFromToken(newAccessToken));
     setUser(getUserFromToken(newAccessToken));
@@ -74,9 +74,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const logout = async () => {
     try {
-      await authService.logout();
+      await logoutRequest();
     } finally {
-      tokenService.clearTokens();
+      clearAccessToken();
       queryClient.clear();
       setAccessToken(null);
       setRoles([]);

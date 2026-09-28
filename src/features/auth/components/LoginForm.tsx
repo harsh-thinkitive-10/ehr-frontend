@@ -15,7 +15,7 @@ import {
   type LoginFormData,
 } from '../schemas/auth.schema';
 
-import { authService } from '../services/authService';
+import { login as loginRequest } from '../../../sdk/generated/auth/auth';
 import { useAuth } from '../context';
 
 export default function LoginForm() {
@@ -44,7 +44,7 @@ export default function LoginForm() {
     setApiError('');
 
     try {
-      const response = await authService.login(data);
+      const response = await loginRequest(data);
 
       // Store access token and update authentication state
       login(response);

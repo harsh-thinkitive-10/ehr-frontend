@@ -1,18 +1,16 @@
-import { useQuery } from '@tanstack/react-query';
-import { locationService } from '../../location/services/locationService';
+import { useGetAllLocations } from '../../../sdk/generated/location/location';
 
-export const appointmentLocationKeys = {
-  all: ['appointment-locations'] as const,
-  list: () => [...appointmentLocationKeys.all, 'list'] as const,
-};
+import type { LocationListResponse } from '../../location/types/location';
 
 export function useAppointmentLocations() {
-  return useQuery({
-    queryKey: appointmentLocationKeys.list(),
-    queryFn: async () => {
-      const response = await locationService.getLocations({ page: 0, size: 100 });
-      return response.data.content;
+  return useGetAllLocations(
+    { page: 0, size: 100 },
+    {
+      query: {
+        select: (response) =>
+          (response as unknown as LocationListResponse).data.content,
+        staleTime: 5 * 60 * 1000,
+      },
     },
-    staleTime: 5 * 60 * 1000,
-  });
+  );
 }

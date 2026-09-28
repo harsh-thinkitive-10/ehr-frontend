@@ -20,8 +20,8 @@ import Input from '../../../../component/ui/input/Input';
 import Button from '../../../../component/ui/button/Button';
 
 import type {
-  RegisterPatientRequest,
-} from '../../types/patient';
+  RegisterPatient,
+} from '../../../../sdk/generated/common/types';
 
 const patientFormSchema = z.object({
   firstName: z
@@ -85,7 +85,7 @@ interface PatientFormProps {
   loading?: boolean;
 
   onSubmit: (
-    values: RegisterPatientRequest,
+    values: RegisterPatient,
   ) => void | Promise<void>;
 
   onCancel?: () => void;

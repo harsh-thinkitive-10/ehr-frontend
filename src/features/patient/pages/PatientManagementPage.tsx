@@ -12,7 +12,8 @@ import PatientList from '../component/patient/PatientList';
 import { useRegisterPatient } from '../hooks/useRegisterPatient';
 import { useDeletePatient } from '../hooks/useDeletePatient';
 import { patientKeys } from '../hooks/usePatients';
-import type { Patient, RegisterPatientRequest } from '../types/patient';
+import type { Patient } from '../types/patient';
+import type { RegisterPatient } from '../../../sdk/generated/common/types';
 import AppSnackbar from '../../../component/feedback/AppSnackbar';
 import { useSnackbar } from '../../../component/hooks/useSnackbar';
 
@@ -28,7 +29,7 @@ export default function PatientManagementPage() {
 
   const { snackbar, showSuccess, showError, closeSnackbar } = useSnackbar();
 
-  const handleRegister = async (values: RegisterPatientRequest) => {
+  const handleRegister = async (values: RegisterPatient) => {
     try {
       const response = await registerPatient.mutateAsync(values);
       await queryClient.invalidateQueries({ queryKey: patientKeys.all });
@@ -54,7 +55,7 @@ export default function PatientManagementPage() {
   };
 
   return (
-    <Box>
+    <Box sx={{ mt: 1, bgcolor: 'background.paper', border: 1, borderColor: 'divider', borderRadius: 2, p: { xs: 1, md: 2 } }}>
       <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}
         sx={{ mb: 3, alignItems: { xs: 'flex-start', sm: 'center' }, justifyContent: 'space-between' }}>
         <Box>

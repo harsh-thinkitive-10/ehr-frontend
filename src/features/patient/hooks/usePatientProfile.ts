@@ -1,10 +1,11 @@
-import { useQuery } from '@tanstack/react-query';
+import { useGetMyProfile } from '../../../sdk/generated/patient/patient';
 
-import { patientService } from '../services/patientService';
+import type { Patient } from '../types/patient.types';
 
 export function usePatientProfile() {
-    return useQuery({
-        queryKey: ['patient', 'me'],
-        queryFn: patientService.getMyProfile,
+    return useGetMyProfile({
+        query: {
+            select: (profile) => profile as Patient,
+        },
     });
 }

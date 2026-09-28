@@ -52,7 +52,7 @@ export default function AdminDashboard() {
   }
 
   return (
-    <Box>
+    <Box  sx={{ mt: 1, bgcolor: 'background.paper', border: 1, borderColor: 'divider', borderRadius: 2, p: { xs: 1, md: 2 } }}>
       {/* PAGE HEADER */}
 
       <Stack spacing={0.5} sx={{ mb: 4 }}>

@@ -1,5 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
-import { appointmentService } from '../services/appointmentService';
+
+import { updateAppointmentStatus } from '../../../sdk/generated/appointment/appointment';
+
 import type { AppointmentStatus } from '../types/appointment';
 
 interface UpdateAppointmentStatusVariables {
@@ -10,6 +12,6 @@ interface UpdateAppointmentStatusVariables {
 export function useUpdateAppointmentStatus() {
   return useMutation({
     mutationFn: ({ uuid, status }: UpdateAppointmentStatusVariables) =>
-      appointmentService.updateAppointmentStatus(uuid, status),
+      updateAppointmentStatus(uuid, { status }),
   });
 }

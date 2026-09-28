@@ -10,7 +10,7 @@
     "preview": "vite preview",
     "typecheck": "tsc --noEmit -p tsconfig.app.json",
     "prepare": "husky",
-    "gen:api": "bash scripts/generate-sdk.sh"
+    "generate:sdk": "node scripts/generate-sdk.mjs"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
@@ -29,7 +29,6 @@
     "zod": "^4.5.4"
   },
   "devDependencies": {
-    "@7nohe/openapi-react-query-codegen": "1.4.1",
     "@babel/parser": "^8.0.5",
     "@babel/preset-react": "^7.29.7",
     "@eslint/js": "^10.0.1",
@@ -37,23 +36,16 @@
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.4",
     "@vitejs/plugin-react": "^6.1.1",
-    "commander": "^12.1.0",
     "eslint": "^10.9.0",
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-react-refresh": "^0.5.4",
-    "glob": "^10.5.0",
     "globals": "^17.11.0",
     "husky": "^9.1.7",
     "magic-string": "^1.4.1",
+    "orval": "8.38.0",
     "prettier": "^3.9.7",
-    "ts-morph": "^22.0.0",
     "typescript": "~6.0.2",
     "typescript-eslint": "^8.67.0",
     "vite": "^8.2.2"
-  },
-  "overrides": {
-    "@7nohe/openapi-react-query-codegen": {
-      "typescript": "$typescript"
-    }
   }
 }

@@ -39,32 +39,3 @@ export interface PatientListParams {
   age?: number;
   sort?: string;
 }
-
-export interface RegisterPatientRequest {
-  firstName: string;
-  lastName: string;
-  age: number;
-  gender: PatientGender;
-  phoneNumber: string;
-  email: string;
-}
-
-export interface RegisterPatientResponse {
-  code: string;
-  data: Patient;
-  message: string;
-}
-
-export interface UpdatePatientRequest {
-  fullName: string;
-  age: number;
-  gender: string;
-  phoneNumber: string;
-  email: string;
-}
-
-export interface UpdatePatientResponse {
-  code: string;
-  data: Patient;
-  message: string;
-}

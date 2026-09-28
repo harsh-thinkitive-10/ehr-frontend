@@ -43,41 +43,34 @@ export const colors = {
 export const ui = {
   borderRadius: {
     small: 2,
-    medium: 3,
-    large: 4,
-    xlarge: 5,
+    medium: 4,
+    large: 6,
+    xlarge: 8,
   },
-
   button: {
     height: 48,
-    radius: 10,
+    radius: 6,
     fontWeight: 600,
   },
-
   input: {
     height: 40,
-    radius: 3,
+    radius: 4,
   },
-
   card: {
-    radius: 12,
+    radius: 6,
     borderWidth: 1,
   },
-
   chip: {
-    radius: 8,
+    radius: 4,
   },
-
   table: {
     headerBackground: colors.background,
     rowHover: colors.background,
     border: colors.border,
   },
-
   dialog: {
-    radius: 12,
+    radius: 6,
   },
-
   drawer: {
     width: 500,
   },

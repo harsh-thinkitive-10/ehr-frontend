@@ -8,6 +8,7 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  Tooltip,
   Typography,
 } from '@mui/material';
 import type { ReactNode } from 'react';
@@ -25,6 +26,7 @@ interface ManagementTableProps<T> {
   onEdit?: (row: T) => void;
   onDelete?: (row: T) => void;
   emptyMessage?: string;
+  minWidth?: number;
 }
 
 export default function ManagementTable<T>({
@@ -34,22 +36,18 @@ export default function ManagementTable<T>({
   onEdit,
   onDelete,
   emptyMessage = 'No records found',
+  minWidth,
 }: ManagementTableProps<T>) {
   return (
-    <TableContainer component={Paper} elevation={0}>
-      <Table>
+    <TableContainer component={Paper} elevation={0} sx={{ overflowX: 'auto' }}>
+      <Table sx={{ minWidth }}>
         <TableHead>
           <TableRow>
             {columns.map((column) => (
-              <TableCell key={column.key} sx={{ fontWeight: 600 }}>
-                {column.label}
-              </TableCell>
+              <TableCell key={column.key}>{column.label}</TableCell>
             ))}
-            {(onEdit || onDelete) && (
-              <TableCell align="right" sx={{ fontWeight: 600 }}>
-                Actions
-              </TableCell>
-            )}
+
+            {(onEdit || onDelete) && <TableCell align="right">Actions</TableCell>}
           </TableRow>
         </TableHead>
 
@@ -64,7 +62,7 @@ export default function ManagementTable<T>({
             </TableRow>
           ) : (
             rows.map((row) => (
-              <TableRow key={getRowId(row)}>
+              <TableRow key={getRowId(row)} hover>
                 {columns.map((column) => (
                   <TableCell key={column.key}>
                     {column.render
@@ -76,22 +74,19 @@ export default function ManagementTable<T>({
                 {(onEdit || onDelete) && (
                   <TableCell align="right">
                     {onEdit && (
-                      <IconButton
-                        size="small"
-                        onClick={() => onEdit(row)}
-                      >
-                        <Edit fontSize="small" />
-                      </IconButton>
+                      <Tooltip title="Edit">
+                        <IconButton size="small" onClick={() => onEdit(row)}>
+                          <Edit fontSize="small" />
+                        </IconButton>
+                      </Tooltip>
                     )}
 
                     {onDelete && (
-                      <IconButton
-                        size="small"
-                        color="error"
-                        onClick={() => onDelete(row)}
-                      >
-                        <Delete fontSize="small" />
-                      </IconButton>
+                      <Tooltip title="Delete">
+                        <IconButton size="small" color="error" onClick={() => onDelete(row)}>
+                          <Delete fontSize="small" />
+                        </IconButton>
+                      </Tooltip>
                     )}
                   </TableCell>
                 )}

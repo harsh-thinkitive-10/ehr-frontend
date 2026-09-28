@@ -379,7 +379,7 @@ export default function AppointmentListPage() {
 
   return (
     <>
-      <Box>
+      <Box >
         {/* PAGE HEADER */}
 
         <Stack

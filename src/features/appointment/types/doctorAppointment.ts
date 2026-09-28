@@ -24,9 +24,3 @@ export interface DoctorAppointmentPage {
   totalElements: number;
   totalPages: number;
 }
-
-export interface DoctorAppointmentResponse {
-  code: string;
-  data: DoctorAppointmentPage;
-  message: string;
-}

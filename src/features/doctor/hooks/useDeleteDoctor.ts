@@ -1,8 +1,9 @@
 import { useMutation } from '@tanstack/react-query';
-import { doctorService } from '../services/doctorService';
+
+import { deleteDoctor } from '../../../sdk/generated/doctor/doctor';
 
 export function useDeleteDoctor() {
   return useMutation({
-    mutationFn: (uuid: string) => doctorService.deleteDoctor(uuid),
+    mutationFn: (uuid: string) => deleteDoctor(uuid),
   });
 }

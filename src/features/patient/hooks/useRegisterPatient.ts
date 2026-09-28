@@ -1,16 +1,13 @@
 import { useMutation } from '@tanstack/react-query';
 
-import { patientService } from '../services/patientService';
-
-import type {
-  RegisterPatientRequest,
-} from '../types/patient';
+import { registerNewPatient } from '../../../sdk/generated/patient/patient';
+import type { RegisterPatient } from '../../../sdk/generated/common/types';
 
 export function useRegisterPatient() {
   return useMutation({
     mutationFn: (
-      data: RegisterPatientRequest,
+      data: RegisterPatient,
     ) =>
-      patientService.registerPatient(data),
+      registerNewPatient(data),
   });
 }

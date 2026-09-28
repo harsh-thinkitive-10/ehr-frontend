@@ -1,19 +1,22 @@
 import { useMutation } from '@tanstack/react-query';
 
-import { queryClient } from '../../../app/queryClient';
+import { queryClient } from '../../../sdk/queryClient';
+import {
+  getGetDoctorProfileQueryKey,
+  updateDoctorProfile,
+} from '../../../sdk/generated/doctor/doctor';
 
-import { doctorProfileKeys } from './useDoctorProfile';
-
-import { doctorProfileService } from '../services/doctorProfileService';
+import type { DoctorProfileFormData } from '../schemas/doctorProfile.schema';
 
 export function useUpdateDoctorProfile() {
   return useMutation({
-    mutationFn:
-      doctorProfileService.updateProfile,
+    mutationFn: async (data: DoctorProfileFormData) => {
+      await updateDoctorProfile(data);
+    },
 
     onSuccess: async () => {
       await queryClient.invalidateQueries({
-        queryKey: doctorProfileKeys.all,
+        queryKey: getGetDoctorProfileQueryKey(),
       });
     },
   });

@@ -1,35 +1,36 @@
-import { useQuery } from '@tanstack/react-query';
-
 import {
-  doctorService,
-  type DoctorListParams,
-} from '../services/doctorService';
+  getGetAllDoctorsQueryKey,
+  useGetAllDoctors,
+} from '../../../sdk/generated/doctor/doctor';
+
+import type { DoctorListResponse } from '../types/doctor';
+
+export interface DoctorListParams {
+  page: number;
+  size: number;
+  sort?: string;
+  search?: string;
+  specialization?: string;
+}
 
 export const doctorKeys = {
-  all: ['doctors'] as const,
-
-  list: (
-    params: DoctorListParams,
-  ) =>
-    [
-      ...doctorKeys.all,
-      'list',
-      params,
-    ] as const,
+  all: getGetAllDoctorsQueryKey(),
 };
 
 export function useDoctors(
   params: DoctorListParams,
 ) {
-  return useQuery({
-    queryKey:
-      doctorKeys.list(params),
+  const { sort, ...rest } = params;
 
-    queryFn: () =>
-      doctorService.getDoctors(
-        params,
-      ),
+  return useGetAllDoctors(
+    { ...rest, ...(sort ? { sort: [sort] } : {}) },
+    {
+      query: {
+        select: (response) =>
+          response as unknown as DoctorListResponse,
 
-    staleTime: 5 * 60 * 1000,
-  });
+        staleTime: 5 * 60 * 1000,
+      },
+    },
+  );
 }

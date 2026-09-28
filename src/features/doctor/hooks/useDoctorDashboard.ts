@@ -1,13 +1,12 @@
-import { useQuery } from '@tanstack/react-query';
-import { doctorDashboardService } from '../services/doctorDashboardService';
+import { useGetDoctorDashboard } from '../../../sdk/generated/doctor/doctor';
 
-export const doctorDashboardKeys = {
-  all: ['doctor-dashboard'] as const,
-};
+import type { DoctorDashboard } from '../types/doctorDashboard';
 
 export function useDoctorDashboard() {
-  return useQuery({
-    queryKey: doctorDashboardKeys.all,
-    queryFn: doctorDashboardService.getDashboard,
+  return useGetDoctorDashboard({
+    query: {
+      select: (response) =>
+        response.data as unknown as DoctorDashboard,
+    },
   });
 }

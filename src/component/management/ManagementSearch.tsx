@@ -6,7 +6,8 @@ interface ManagementSearchProps {
   placeholder: string;
   onChange: (value: string) => void;
   onSearch: () => void;
-  onFilter: () => void;
+  onFilter?: () => void;
+  showFilter?: boolean;
 }
 
 export default function ManagementSearch({
@@ -15,6 +16,7 @@ export default function ManagementSearch({
   onChange,
   onSearch,
   onFilter,
+  showFilter = true,
 }: ManagementSearchProps) {
   return (
     <Stack direction="row" spacing={1.5} sx={{ alignItems: 'center' }}>
@@ -42,9 +44,11 @@ export default function ManagementSearch({
         Search
       </Button>
 
-      <Button variant="outlined" startIcon={<FilterList />} onClick={onFilter}>
-        Filter
-      </Button>
+      {showFilter && onFilter && (
+        <Button variant="outlined" startIcon={<FilterList />} onClick={onFilter}>
+          Filter
+        </Button>
+      )}
     </Stack>
   );
 }
